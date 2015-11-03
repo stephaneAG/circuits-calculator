@@ -20,6 +20,12 @@ Depending on how the js plugin used for zooming & panning the SVG works ( this o
 *I'll mail them in few hours as well as others when the POC advances more, to see what can be done & by who* :)
 ** for the "how", I already got a pretty good idea ;P
 
+
+REMINDER: 
+local: Documents/interactiveSchematicSVG/circuitsCalculator_roughPOC.html  
+hosted: [Github preview](http://htmlpreview.github.io/?https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuitsCalculator_roughPOC.html)
+
+
 Early screenshots:
 <img src="http://www.stephaneadamgarnier.com/circuitsCalculator/circuits-calculator_screen1.png" align="" height="" width="" >
 <img src="http://www.stephaneadamgarnier.com/circuitsCalculator/circuits-calculator_screen2.png" align="" height="" width="" >
