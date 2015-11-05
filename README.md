@@ -1,6 +1,38 @@
 # circuits-calculator
 WIP POC of a circuit-calculation tool to work with 123DCircuits schematics's SVGs
 
+##TODOs:
+- [x] ~~make the initial move(s) ! ^^~~
+- [ ] add "reset" button on top right of header
+- [ ] add "reset" functionality ( clears both the fields & the symbols' texts )
+- [ ] add "hide infos" button on top right of header
+- [ ] add "hide infos" functionality ( toggle the infos pane )
+- [ ] add "edit json" button on top right of header
+- [ ] add "edit json" functionality ( edit the circuit's json )
+- [ ] add dynamic circuit name ( header )
+- [ ] add dynamic author name ( header )
+- [ ] add dynamic link(s) ( header )
+- [ ] dynami[ze|te?] the infos pane ( and DON'T forget to add legends after the unities in the fields section )
+- [ ] add dynamic loading of stuff from the json  
+( circuit name, author, link(s), notice, infos, formulas, fields, help, calculate(), .. )
+- [ ] add event listener for symbols texts ( colorize symbol & text + scroll to & focus corresponding field )
+- [ ] add event listener for fields focus ( colorize corresponding symbol & text )
+- [ ] add event listener for input focusout ( uncolorize colorized symbol & text )
+- [ ] add event listener for input 'Enter/Done' ( calculation - ex: if 3 vars on 4, get the 4th text & symbol )
+- [ ] add event listener for input text change ? ( could be nice to append text as it's typed instead of 'Enter' )
+- [ ] add circuits pane "add" button
+- [ ] add circuits pane "add" functionality ( prompts user for an URL where (a) circuit(s) + json(s) can be found )
+- [ ] add circuits pane circuits listing
+- [ ] add "config" support ( infos pane on top or bottom, colors override of default colors, .. )
+- [ ] add js bookmark that extract schematic SVG from 123DCircuits & processes it to get a modded .SVG + .json
+- [ ] add helpers to split value & unity from a string ( the string being a component value like "110Ω" )
+- [ ] add parser logic to crawl parents/children/siblings from an element which holds a supported "pattern"
+- [ ] add an example circuit + json files
+- [ ] add code that gets files from a github repo ( .. )
+- [ ] add support for said-"patterns" in components ( "#:R1" = Resistor "1" == set a dynamic value for it )
+- [ ] add support for said-"patterns" in labels ( "#:Label" = "Label: " == append to it dynamically )
+- remember to tell the 123DCircuits team that the image for the label element is not the right one ( opamp :/ .. )
+
 The goal is to be able to easily create a schematic in 123DCircuits, set specific "patterns" for the dynamic parts of it ( read: the ones that 'll be updated by the calculations ) & then "export" it ( generate a modded SVG + a .json file ) for usage in circuits-calculator.  
 Then, the json can be edited to specify which formula(s) to apply, & some infos about the name of the circuit, links, help [ & maybe an icon ? ^^ ] ( the fields are to be auto-generated from the said "specific patterns" ).  
 A collection of circuits can be added, just by clicking the 'Add' button on the left pane: it 'll popup a prompt asking for a repo ( url[/path] ) that should host the said SVG & related json.
