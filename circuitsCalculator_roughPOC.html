@@ -4581,6 +4581,27 @@ Provide any of the three available values abd the remaining value + resistor cur
   window.onload = function(){
     console.log('SVG souhld be loaded, calling the panner on it .. ');
     var panZoomTiger = svgPanZoom('#tefedit');
+    
+    // test an xhr when the page is served right from the github servers ;p
+    var circuitsObjs = [];
+
+    circuitsObjs.push( {name: "voltage_divider", json: "voltage_divider.json", jsonUrl: "https://raw.githubusercontent.com/stephaneAG/circu…s-calculator/master/circuits/voltage_divider.json", svg: "voltage_divider.svg", svgUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg"} );
+
+    var xhr = new XMLHttpRequest();
+    xhr.idx = 1; // the index of the corresponding object in the array
+    xhr.trgt = 'jsonF'; // the name of the key to add to it ( here, jsonFile )
+    xhr.open('GET', circuitsObjs[0].jsonUrl, true);
+    xhr.onreadystatechange = function (aEvt) {
+      if (xhr.readyState == 4) {
+         if(xhr.status == 200){
+          console.log(xhr.responseText);
+          console.log( 'index: ' + xhr.idx + ' target: ' + trgt);
+      } else
+          console.log("Erreur pendant le chargement de la page.\n");
+      }
+    };
+    xhr.send(null);
+    
   }
 </script>
 
