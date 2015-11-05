@@ -1,31 +1,31 @@
 {
-  "_comment": "the name of the circuit - generated ",
+  "_comment_circuit": "the name of the circuit - generated ",
   circuit: 'Voltage Divider',
   
-  "_comment": "the author",
+  "_comment_author": "the author",
   author: 'StephaneAG',
   
-  "_comment": "link(s) related to the circuit ( can be either links to webpage or to circuit://<circuit_name>)",
+  "_comment_links": "link(s) related to the circuit ( can be either links to webpage or to circuit://<circuit_name>)",
   links: [ 
            '123D|123DCircuits.com', 
            'HaD|hackaday.com'
          ],
          
-  "_comment": "the grey-ish notice in the infos pane",
+  "_comment_notice": "the grey-ish notice in the infos pane",
   notice: 'Enter any three values to calculate the remaining value',
   
-  "_comment": "the main circuit infos",
+  "_comment_infos": "the main circuit infos",
   infos: [
            'The {circuit name} Calculator calculates .. for a {circuit name} circuit',
            'Blablabla ..'
          ],
          
-  "_comment": "the formula(s) used to calculate stuff out ( stuff within backticks = add math-like notation )",
+  "_comment_formulas": "the formula(s) used to calculate stuff out ( stuff within backticks = add math-like notation )",
   formulas: [
               'Vout = Vin*R2/(R1+R2)|`sum_(i=1)^n i^3=((n(n+1))/2)^2`'
             ],
             
-  "_comment": "the interactive fields from which the calculate() function deduces stuff out - generated",
+  "_comment_fields": "the interactive fields from which the calculate() function deduces stuff out - generated",
   fields: [
             'Vin|V|the input voltage',
             'Vout|V|the output voltage',
@@ -33,10 +33,10 @@
             'R2|Ω'
           ],
   
-  "_comment": "the calculate() function that deduces stuff out from the values in the interactive fields",
+  "_comment_calculate": "the calculate() function that deduces stuff out from the values in the interactive fields",
   calculate: 'function calculate(){ console.log("Hello Wolrd !"); }',
           
-  "_comment": "some help / further explanation on the circuit",
+  "_comment_help": "some help / further explanation on the circuit",
   help: [
           'Input values can be cleared using the refresh button',
           'Values can be changed either by tapping schematic symbols or their respective text fields',
