@@ -22,8 +22,11 @@ WIP POC of a circuit-calculation tool to work with 123DCircuits schematics's SVG
 - [ ] add event listener for input text change ? ( could be nice to append text as it's typed instead of 'Enter' )
 - [ ] add circuits pane "add" button
 - [ ] add circuits pane "add" functionality ( prompts user for an URL where (a) circuit(s) + json(s) can be found )
+- [ ] allow user to review the .json [ & the SVG ] added ( if added one by one, aka url to a file(name) != a dir )
+- [ ] display progress when downloading the circuits ( each circuit progrss bar can have 3 splits - svg, json, js)
 - [ ] add circuits pane circuits listing
 - [ ] add "config" support ( infos pane on top or bottom, colors override of default colors, .. )
+- [ ] be able to load color from either user config ( global ) or specific to a particular circuit ( json-based )
 - [ ] add js bookmark that extract schematic SVG from 123DCircuits & processes it to get a modded .SVG + .json
 - [ ] add helpers to split value & unity from a string ( the string being a component value like "110Ω" )
 - [ ] add parser logic to crawl parents/children/siblings from an element which holds a supported "pattern"
@@ -34,6 +37,7 @@ WIP POC of a circuit-calculation tool to work with 123DCircuits schematics's SVG
 - [ ] be able to store/restore the last values used for a particular circuit
 - [ ] animate the apparition of the schematics SVGs ( most generic possible )
 - [ ] implement linking to other circuits ( aka handle a "circuit:" prefix for links pointing to other circuits )
+- [ ] make the circuit js object available in window.CC.circuit so that sourced 'calculate()' js helpers can use it
 - remember to tell the 123DCircuits team that the image for the label element is not the right one ( opamp :/ .. )
 
 The goal is to be able to easily create a schematic in 123DCircuits, set specific "patterns" for the dynamic parts of it ( read: the ones that 'll be updated by the calculations ) & then "export" it ( generate a modded SVG + a .json file ) for usage in circuits-calculator.  
