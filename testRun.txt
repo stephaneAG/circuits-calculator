@@ -1,0 +1,42 @@
+On first launch, we show the "home".It displays infos on the tool, the logo, the thx/© &CIe, as well as offering a
+quick [animated ?] tutorial on the usage ( aka, interactive walkthrough )  
+We also invite the user to create some circuit on 123DCircuit with the necessary patterns & click "add"
+while providing a correct url fo the files to be downloaded ( or maybe add also a drag & drop fcnality on desktop ? )
+, or to just hit a button to download the circuits hosted on the official repo of te project ( aka, mine ;p  )
+
+Nb: just thinking: if we can xhr the circuit's SVG directly from it's 123DCircuits page ( with a good/std scale ! ),
+then we don't have the need for the js bookmark ;p ( digg how they embed stuff / <script> & Cie if xhr not allowed )
+
+If the user either enters his particular circuit's url(s)/files or hit the button that DL the std circuits,
+we inform the user that something's DLing ( either using a blocking very detailed promp-like, or the same
+but that starts hidden with just a message informing of the DL in progress or completed -> followed by "refreshing").  
+Obviously, we save what the user was doing right before refreshing the list so as to come back to it after the refresh ?  
+-> maybe not needed if we "just" refresh the list in the "visible things", & just re-highlight the circuit's list item
+that was on before [ as well as scrolling the list if needed, so as to maintain the current, selected item "centered" ]
+
+When we have fetched the response from our last xhr, we inform the user of the iminent refresh, as said above,
+as well as save in either the localStorage ( or another json ? ) the list of our circuits objects fetched ( aka a
+JSON-stringified array of them ).
+We have to check if some already exist, & if so, not touch them ( what about updates ? delete, add other(s) ;p ! )
+Once this is done, we "refresh" the left-pane's list from the circuits sotred in localStorage ( that is, 
+the stuff in localStorage which name(s) 's/re prefixed by "circuit:" ).
+On that left-pane, we only show the name of the circuit ( or an excerpt of it if too long ), as well as the author
+( and maybe, but MAYBE ONLY, the version .. ;P ).
+
+When we click one of these said-list-items, we do multiple things ( as usual ;p ):
+We first save the current right side stuff as "current view" ( we really just same the name of the circuit as 
+the last being shown before clicking some list item, which 'd allow use to have a "quick jump" button to switch
+between two circuits quickly, and what about a "favs" list that could sit right on top of the list of items ? we 'd
+just have to check the existence of a particular circuit's fav when one* is deleted. *one circuit, but we should
+be able to delete favs too ! ^^ )
+After doing so, we update the stored version of the circuit that was in use to reflect the changes that the user
+may have made ( svg, json, fields ) .. or do we ? -> if we save that after json edit or field update, we're good to
+go without worrying about this ! :D ( that's one less thing left to do ;p )
+Then, we finally get the circuit obj associated with the clicked list item ( aka fetched back from localStorage using
+circuit:<circuit_name> ).
+It contains everything (svg, json, js, [.. ?] ) on a particular circuit ! ;D
+We use it to load/update stuff on the right side ( header links actions, infos pane, shcematic, [.. ?] ), and we
+don't forget to "source" the "calculate()" function ( as well as make the circuit obj available in the 
+window.CC namespace [ & "source" any js if helpers are specified for that particular circuit ] )
+
+symbol's text click  & fields focus / fields unfocus / [ fields txt change / ] fields 'Enter' key -> calculate()
