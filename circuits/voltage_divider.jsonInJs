@@ -28,8 +28,8 @@
   "_comment": "the interactive fields from which the calculate() function deduces stuff out - generated",
   fields: [
             'Vin|V|the input voltage',
-            'Vout|V|the output voltage'
-            'R1|Ω'
+            'Vout|V|the output voltage',
+            'R1|Ω',
             'R2|Ω'
           ],
   
