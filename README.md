@@ -31,6 +31,9 @@ WIP POC of a circuit-calculation tool to work with 123DCircuits schematics's SVG
 - [ ] add code that gets files from a github repo ( .. )
 - [ ] add support for said-"patterns" in components ( "#:R1" = Resistor "1" == set a dynamic value for it )
 - [ ] add support for said-"patterns" in labels ( "#:Label" = "Label: " == append to it dynamically )
+- [ ] be able to store/restore the last values used for a particular circuit
+- [ ] animate the apparition of the schematics SVGs ( most generic possible )
+- [ ] implement linking to other circuits ( aka handle a "circuit:" prefix for links pointing to other circuits )
 - remember to tell the 123DCircuits team that the image for the label element is not the right one ( opamp :/ .. )
 
 The goal is to be able to easily create a schematic in 123DCircuits, set specific "patterns" for the dynamic parts of it ( read: the ones that 'll be updated by the calculations ) & then "export" it ( generate a modded SVG + a .json file ) for usage in circuits-calculator.  
