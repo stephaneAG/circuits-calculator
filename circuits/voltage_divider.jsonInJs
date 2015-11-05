@@ -1,4 +1,4 @@
-{
+var myJsObj= {
   "_comment_circuit": "the name of the circuit - generated ",
   circuit: 'Voltage Divider',
   
@@ -8,7 +8,7 @@
   "_comment_links": "link(s) related to the circuit ( can be either links to webpage or to circuit://<circuit_name>)",
   links: [ 
            '123D|123DCircuits.com', 
-           'HaD|hackaday.com'
+           'circuit://voltage_divider_alt'
          ],
          
   "_comment_notice": "the grey-ish notice in the infos pane",
