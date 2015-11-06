@@ -43,7 +43,19 @@
     #circuitspane { box-shadow: black -6px -6px 15px -10px inset; }
     #configpane { box-shadow: black 6px -6px 15px -10px inset; }
     #header { -webkit-box-shadow: 15px -6px 15px 10px #E6E6E6; } /*def: #ccc*/
-    #inputs {  }
+    #inputs {  } /*TODO: add the opposite of the above here ;) */
+
+    /* trying to get hw acceleration on iOS for that damn SVG ! */
+    svg#tefedit {
+      -webkit-transform: translate3d(0, 0, 0);
+      -webkit-backface-visibility: hidden;
+      -webkit-perspective: 1000;
+    }
+
+    /* quick "can't upload imgs to github right now" fix */
+    img#appicon {
+      background: url('https://assets.circuits.io/assets/menu/mainmenu_appicon_adskcircuits-7ba9648f78357a1e8e3b0a3b63445dc2.png');
+    }
 
     /* having fun */
     html { background-color: white; } /* necessary NOT to see the borders of the schematic (R: I could also have removed the big white rect, but I kept it to have print-ready SVGs ;D ) */
@@ -4726,8 +4738,8 @@ Provide any of the three available values abd the remaining value + resistor cur
           window.panZoom = svgPanZoom('#tefedit', {
             zoomEnabled: true, 
             controlIconsEnabled: true,
-            fit: 1, 
-            center: 1, 
+            //fit: 1, 
+            //center: 1, 
             customEventsHandler: eventsHandler
           });
     /* R/ used before improving iOS compatibility
