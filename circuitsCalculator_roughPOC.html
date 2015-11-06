@@ -4693,7 +4693,8 @@ Provide any of the three available values abd the remaining value + resistor cur
     });
 
     // show / hide settings pane ( nb: the button to do so is only visible when the circuits pane is already visible since the settings pane resides in the same wrapper )
-    settingsBtn.addEventListener('click', function(){
+    settingsBtn.addEventListener('click', function(e){
+      e.preventDefault();// necessary for github preview
       if (configpane.classList.contains('visible') ){
         console.log( 'hiding config pane ..' );
         header.style.marginLeft = "300px";
