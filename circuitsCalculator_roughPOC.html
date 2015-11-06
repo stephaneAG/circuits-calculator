@@ -2,7 +2,7 @@
 <head>
   <style>
     html, body { margin:0; padding:0; overflow:hidden; }
-    svg#tefedit { display: block; }
+    svg#tefedit { display: block; -webkit-overflow-scrolling: touch; } /* try: I'll have to rewrite pan/zoom anyway ..*/
     svg#chiplogo { display: block; margin: auto; }
     #header, #inputs { margin-left: 300px; position:fixed; left:0; z-index: 5; padding: 10px; width: 100%; background-color: rgba(247, 247, 247, 0.90); }
     #header { top:0; height: 58px; padding: 0; }
@@ -11,7 +11,8 @@
     /*#inputs { bottom:0; height: 33%; }*/
     /*#inputs { bottom:0; height: auto; max-height: 33%; overflow-y: scroll; -webkit-overflow-scrolling: touch; }*/
     /* for iOS github preview test */
-    #inputs { bottom:0; height: 33%; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
+    /*#inputs { bottom:0; height: 33%; overflow-y: scroll; -webkit-overflow-scrolling: touch; }*/ /* ok */
+    #inputs { bottom:0; height: 33%; height: auto; max-height: 33%; overflow-y: scroll; -webkit-overflow-scrolling: touch; }
     .littltitle { margin: 0; padding: 0; }
     .apptitle { text-align: center; }
     pre.usage { color: #919AA4; }
