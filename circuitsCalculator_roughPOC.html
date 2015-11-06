@@ -4,7 +4,7 @@
     html, body { margin:0; padding:0; overflow:hidden; }
     svg#tefedit { display: block; }
     svg#chiplogo { display: block; margin: auto; }
-    #header, #inputs { margin-left: 320px; position:fixed; left:0; z-index: 5; padding: 10px; width: 100%; background-color: rgba(247, 247, 247, 0.90); }
+    #header, #inputs { margin-left: 300px; position:fixed; left:0; z-index: 5; padding: 10px; width: 100%; background-color: rgba(247, 247, 247, 0.90); }
     #header { top:0; height: 58px; padding: 0; }
     img { clear: none; float: left; padding-right: 20px; }
     #header #header-p { display: block; clear: none; font-size: 20px; margin-top: 17px; }
@@ -14,7 +14,7 @@
     .apptitle { text-align: center; }
     pre.usage { color: #919AA4; }
     span.circuit-author {  }
-    pre.info, pre.help, span.circuit-author { color: #2E78C6; }
+    pre.info, pre.help, span.circuit-author, .symbolSelected { color: #2E78C6; }
     pre.formula, span.link { color: #919AA4; }
     pre.formula.math { color: #56626F; }
     pre.formula { font-size: 20px; }
@@ -22,35 +22,114 @@
     ul li { margin-top: 5px;  }
     .prefix { /*background-color: green;*/ display: block; clear: none; float: left; width: 50px; text-align: right; margin-right: 10px; }
     /*.field { background-color: red; width: 100px; }*/
-    #circuitspane {  width: 300px; height: 100%; position:fixed; left:0; top: 0; z-index: 4; padding: 10px; background-color: rgba(207, 207, 207, 0.90); }
-    #circuitspane .left__divider { margin: 12px 20px; height: 1px; background-color: red/*#dfe3e8*/; }
+    #circuitspane { width: 300px; height: 100%; position:fixed; left:0; top: 0; z-index: 4; background-color: rgba(207, 207, 207, 0.90); overflow: hidden; }
+    /*#circuitspane .wrapper { width: 300px; padding: 10px; }*/ /* prevents the inner elements from collapsing when we toggle the visibility of the circuits pane*/
+    /*.wrapper { width: 100%; padding: 10px; }*/    
+    .wrapper { width: 700px; padding: 10px; padding-top: 0; }
+
+    /*#circuitspane .left__divider { margin: 12px 20px; height: 1px; background-color: red; }#dfe3e8*/
+
+    /* circuits */
+    #circuits { width: 300px; height: 100%; float: left; }
+
+    /* config pane */
+    /*#configpane { width: 300px; height: 100%; position:fixed; left:300; top: 0; z-index: 4; background-color: rgba(207, 207, 207, 0.90); overflow: hidden; }*/
+    #configpane { width: 300px; height: 100%; background-color: transparent; overflow: hidden; padding-left: 10px; }
+
+    /* polishing ;p */
+    #circuitspane { box-shadow: black -6px -6px 15px -10px inset; }
+    #configpane { box-shadow: black 6px -6px 15px -10px inset; }
+    #header { -webkit-box-shadow: 15px -6px 15px 10px #E6E6E6; } /*def: #ccc*/
+    #inputs {  }
+
+    /* having fun */
+    html { background-color: white; } /* necessary NOT to see the borders of the schematic (R: I could also have removed the big white rect, but I kept it to have print-ready SVGs ;D ) */
+    
+    /* arrows */
+    /*
+    #circuitspane {
+      background:
+linear-gradient(45deg, #92baac 45px, transparent 45px)64px 64px,
+linear-gradient(45deg, #92baac 45px, transparent 45px,transparent 91px, #e1ebbd 91px, #e1ebbd 135px, transparent 135px),
+linear-gradient(-45deg, #92baac 23px, transparent 23px, transparent 68px,#92baac 68px,#92baac 113px,transparent 113px,transparent 158px,#92baac 158px);
+background-color:#e1ebbd;
+background-size: 128px 128px;
+    }
+    */
+    
+    /* Tartan */
+    /*
+    #circuitspane {
+      background-color: hsl(2, 57%, 40%);
+background-image: repeating-linear-gradient(transparent, transparent 50px, rgba(0,0,0,.4) 50px, rgba(0,0,0,.4) 53px, transparent 53px, transparent 63px, rgba(0,0,0,.4) 63px, rgba(0,0,0,.4) 66px, transparent 66px, transparent 116px, rgba(0,0,0,.5) 116px, rgba(0,0,0,.5) 166px, rgba(255,255,255,.2) 166px, rgba(255,255,255,.2) 169px, rgba(0,0,0,.5) 169px, rgba(0,0,0,.5) 179px, rgba(255,255,255,.2) 179px, rgba(255,255,255,.2) 182px, rgba(0,0,0,.5) 182px, rgba(0,0,0,.5) 232px, transparent 232px),
+repeating-linear-gradient(270deg, transparent, transparent 50px, rgba(0,0,0,.4) 50px, rgba(0,0,0,.4) 53px, transparent 53px, transparent 63px, rgba(0,0,0,.4) 63px, rgba(0,0,0,.4) 66px, transparent 66px, transparent 116px, rgba(0,0,0,.5) 116px, rgba(0,0,0,.5) 166px, rgba(255,255,255,.2) 166px, rgba(255,255,255,.2) 169px, rgba(0,0,0,.5) 169px, rgba(0,0,0,.5) 179px, rgba(255,255,255,.2) 179px, rgba(255,255,255,.2) 182px, rgba(0,0,0,.5) 182px, rgba(0,0,0,.5) 232px, transparent 232px),
+repeating-linear-gradient(125deg, transparent, transparent 2px, rgba(0,0,0,.2) 2px, rgba(0,0,0,.2) 3px, transparent 3px, transparent 5px, rgba(0,0,0,.2) 5px);
+    }
+    */
+
+    /* madras */
+    /*
+    #circuitspane {
+      background-color: hsl(34, 53%, 82%);
+background-image: repeating-linear-gradient(45deg, transparent 5px, hsla(197, 62%, 11%, 0.5) 5px, hsla(197, 62%, 11%, 0.5) 10px,                  
+  hsla(5, 53%, 63%, 0) 10px, hsla(5, 53%, 63%, 0) 35px, hsla(5, 53%, 63%, 0.5) 35px, hsla(5, 53%, 63%, 0.5) 40px,
+  hsla(197, 62%, 11%, 0.5) 40px, hsla(197, 62%, 11%, 0.5) 50px, hsla(197, 62%, 11%, 0) 50px, hsla(197, 62%, 11%, 0) 60px,                
+  hsla(5, 53%, 63%, 0.5) 60px, hsla(5, 53%, 63%, 0.5) 70px, hsla(35, 91%, 65%, 0.5) 70px, hsla(35, 91%, 65%, 0.5) 80px,
+  hsla(35, 91%, 65%, 0) 80px, hsla(35, 91%, 65%, 0) 90px, hsla(5, 53%, 63%, 0.5) 90px, hsla(5, 53%, 63%, 0.5) 110px,
+  hsla(5, 53%, 63%, 0) 110px, hsla(5, 53%, 63%, 0) 120px, hsla(197, 62%, 11%, 0.5) 120px, hsla(197, 62%, 11%, 0.5) 140px       
+  ),
+repeating-linear-gradient(135deg, transparent 5px, hsla(197, 62%, 11%, 0.5) 5px, hsla(197, 62%, 11%, 0.5) 10px, 
+  hsla(5, 53%, 63%, 0) 10px, hsla(5, 53%, 63%, 0) 35px, hsla(5, 53%, 63%, 0.5) 35px, hsla(5, 53%, 63%, 0.5) 40px,
+  hsla(197, 62%, 11%, 0.5) 40px, hsla(197, 62%, 11%, 0.5) 50px, hsla(197, 62%, 11%, 0) 50px, hsla(197, 62%, 11%, 0) 60px,                
+  hsla(5, 53%, 63%, 0.5) 60px, hsla(5, 53%, 63%, 0.5) 70px, hsla(35, 91%, 65%, 0.5) 70px, hsla(35, 91%, 65%, 0.5) 80px,
+  hsla(35, 91%, 65%, 0) 80px, hsla(35, 91%, 65%, 0) 90px, hsla(5, 53%, 63%, 0.5) 90px, hsla(5, 53%, 63%, 0.5) 110px,
+  hsla(5, 53%, 63%, 0) 110px, hsla(5, 53%, 63%, 0) 140px, hsla(197, 62%, 11%, 0.5) 140px, hsla(197, 62%, 11%, 0.5) 160px       
+);
+    }
+    */
+
+
+    /* CSS transitions */
+    #header, #inputs {  -webkit-transition: margin-left .2s; }
+    #circuitspane { -webkit-transition: width .2s; }
   </style>
   <!-- have pan/zoom options for our SVG schematic .. -->
   <script src="svg-pan-zoom.min.js"></script>
   <!-- have math formulas math-like display -->
-  <!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML"></script> -->
-  <script src="ASCIIMathML.js?config=AM_HTMLorMML"></script>
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML"></script>
+  <!-- <script src="ASCIIMathML.js?config=AM_HTMLorMML"></script> -->
 </head>
 <body>
 
 <!-- Tef info: original SVG below -->
 <div id="header">
-  <img alt="Mainmenu_appicon_adskcircuits" height="58" src="appIcon.png" width="58">
+  <img id="appicon" alt="Mainmenu_appicon_adskcircuits" height="58" src="appIcon.png" width="58">
   <p id="header-p"> [ circuit name ] <span class="circuit-author">@author</span> ( <span class="link">link1</span>, <span class="link">link2</span> )</p>
   <!-- usage, reset & default buttons here, floating right -->
 </div>
 
-<div id="circuitspane">
-  <div> 
-    <svg id="chiplogo" width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="M20,5 L10,5 C9.448,5 9,5.448 9,6 L9,24 C9,24.552 9.448,25 10,25 L20,25 C20.552,25 21,24.552 21,24 L21,6 C21,5.448 20.552,5 20,5 L20,5 Z M15.001,8.091 C14,8.091 13,7.096 13,6 L17,6 C17.08,7.484 16.002,8.091 15.001,8.091 Z M6,7 L8,7 L8,11 L6,11 L6,7 Z M6,13 L8,13 L8,17 L6,17 L6,13 Z M6,19 L8,19 L8,23 L6,23 L6,19 Z M22,7 L24,7 L24,11 L22,11 L22,7 Z M22,13 L24,13 L24,17 L22,17 L22,13 Z M22,19 L24,19 L24,23 L22,23 L22,19 Z" transform="translate(0 0)" fill-rule="evenodd"></path></svg>
-    <h3 class="littltitle apptitle">Circuits Calculator</h3>
-  </div>
-  <div> Settings </div>
-  <div class="sidebar--left__divider"> </div>
-  <div> Add new </div>
-
-</div>
+<div id="circuitspane" class="visible">
+  <div class="wrapper">
   
+    <!-- circuitslist -->
+    <div id="circuits">
+      <div> 
+        <svg id="chiplogo" width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path d="M20,5 L10,5 C9.448,5 9,5.448 9,6 L9,24 C9,24.552 9.448,25 10,25 L20,25 C20.552,25 21,24.552 21,24 L21,6 C21,5.448 20.552,5 20,5 L20,5 Z M15.001,8.091 C14,8.091 13,7.096 13,6 L17,6 C17.08,7.484 16.002,8.091 15.001,8.091 Z M6,7 L8,7 L8,11 L6,11 L6,7 Z M6,13 L8,13 L8,17 L6,17 L6,13 Z M6,19 L8,19 L8,23 L6,23 L6,19 Z M22,7 L24,7 L24,11 L22,11 L22,7 Z M22,13 L24,13 L24,17 L22,17 L22,13 Z M22,19 L24,19 L24,23 L22,23 L22,19 Z" transform="translate(0 0)" fill-rule="evenodd"></path></svg>
+        <h3 class="littltitle apptitle">Circuits Calculator</h3>
+      </div>
+      <div> <a href="#settings">Settings</a> </div>
+      <div class="sidebar--left__divider"> </div>
+      <div> Add new </div>
+    </div>    
+
+    <!-- config pane, sitting on the right of the circuits pane -->
+    <div id="configpane">
+      <h4> I AM SOME CONFIG STUFF ^^</h4>
+    </div>
+
+  </div>
+
+
 </div>
 <div id="inputs">
   <pre class="usage">
@@ -66,10 +145,10 @@ Blablabla ..
   <pre class="formula math">`sum_(i=1)^n i^3=((n(n+1))/2)^2`</pre>
   <h3 class="littltitle">fields</h3>
   <ul>
-    <li> <span class="prefix"> Vin </span> <input id="input_Vin" class="field" type="text"> <span class="suffix"> V </span> </li>
-    <li> <span class="prefix"> Vout </span> <input id="input_Vout" class="field" type="text"> <span class="suffix"> V </span> </li>
-    <li> <span class="prefix"> R1 </span> <input id="input_R1" class="field" type="text"> <span class="suffix"> Ohms </span> </li>
-    <li> <span class="prefix"> R2 </span> <input id="input_R2" class="field" type="text"> <span class="suffix"> Ohms </span> </li>
+    <li> <span class="prefix"> Vin </span> <input id="input_Vin" name="input_Vin" class="field" type="text"> <span class="suffix"> V </span> </li>
+    <li> <span class="prefix"> Vout </span> <input id="input_Vout" name="input_Vout" class="field" type="text"> <span class="suffix"> V </span> </li>
+    <li> <span class="prefix"> R1 </span> <input id="input_R1" name="input_R1" class="field" type="text"> <span class="suffix"> Ω </span> </li>
+    <li> <span class="prefix"> R2 </span> <input id="input_R2" name="input_R2" class="field" type="text"> <span class="suffix"> Ω </span> </li>
   </ul>
   <h3 class="littltitle">help</h3>
   <pre class="help">
@@ -4579,29 +4658,60 @@ Provide any of the three available values abd the remaining value + resistor cur
 
 <script>
   window.onload = function(){
+    
+    // handle the panning & zooming the SVG
     console.log('SVG souhld be loaded, calling the panner on it .. ');
-    //var panZoomTiger = svgPanZoom('#tefedit'); // not yet hosted on github
-    
-    // test an xhr when the page is served right from the github servers ;p
-    var circuitsObjs = [];
+    var panZoomTiger = svgPanZoom('#tefedit');
 
-    circuitsObjs.push( {name: "voltage_divider", json: "voltage_divider.json", jsonUrl: "https://raw.githubusercontent.com/stephaneAG/circu…s-calculator/master/circuits/voltage_divider.json", svg: "voltage_divider.svg", svgUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg"} );
+    //
+    var theMenuBtn = document.querySelector('#appicon');
+    var sidePane = document.querySelector('#circuitspane');
+    var header = document.querySelector('#header');
+    var inputs = document.querySelector('#inputs');
+    var configpane = document.querySelector('#configpane');
+    var settingsBtn = document.querySelector('a[href="#settings"]');
 
-    var xhr = new XMLHttpRequest();
-    xhr.idx = 1; // the index of the corresponding object in the array
-    xhr.trgt = 'jsonF'; // the name of the key to add to it ( here, jsonFile )
-    xhr.open('GET', circuitsObjs[0].jsonUrl, true);
-    xhr.onreadystatechange = function (aEvt) {
-      if (xhr.readyState == 4) {
-         if(xhr.status == 200){
-          console.log(xhr.responseText);
-          console.log( 'index: ' + xhr.idx + ' target: ' + trgt);
-      } else
-          console.log("Erreur pendant le chargement de la page.\n");
+    // show / hide circuit pane
+    theMenuBtn.addEventListener('click', function(){
+      if (sidePane.classList.contains('visible') ){
+        console.log( 'hiding side pane ..' );
+        header.style.marginLeft = "0px";
+        inputs.style.marginLeft = "0px";
+        sidePane.style.width = "0px";
+        //sidePane.style.padding = "0px";
+        sidePane.classList.toggle('visible');
+        // way to do n1: consider that if we hide the circuits pane while the config is displayed, we shall not see the config displayd when the circuits pane is later visible
+        if (configpane.classList.contains('visible') ){ configpane.classList.toggle('visible'); }
+      } else {
+        console.log( 'showing side pane ..' );
+        header.style.marginLeft = "300px";
+        inputs.style.marginLeft = "300px";
+        sidePane.style.width = "300px";
+        //sidePane.style.padding = "10px";
+        sidePane.classList.toggle('visible');
       }
-    };
-    xhr.send(null);
-    
+    });
+
+    // show / hide settings pane ( nb: the button to do so is only visible when the circuits pane is already visible since the settings pane resides in the same wrapper )
+    settingsBtn.addEventListener('click', function(){
+      if (configpane.classList.contains('visible') ){
+        console.log( 'hiding config pane ..' );
+        header.style.marginLeft = "300px";
+        inputs.style.marginLeft = "300px";
+        sidePane.style.width = "300px";
+        //sidePane.style.padding = "0px";
+        configpane.classList.toggle('visible');
+      } else {
+        console.log( 'showing config pane ..' );
+        
+        header.style.marginLeft = "600px";
+        inputs.style.marginLeft = "600px";
+        sidePane.style.width = "600px";
+        //sidePane.style.padding = "10px";
+        configpane.classList.toggle('visible');
+      }
+    });
+
   }
 </script>
 
