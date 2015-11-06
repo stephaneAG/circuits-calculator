@@ -60,9 +60,11 @@ Depending on how the js plugin used for zooming & panning the SVG works ( this o
 ** for the "how", I already got a pretty good idea ;P
 
 
-REMINDER: 
+REMINDER(S): 
 local: Documents/interactiveSchematicSVG/circuitsCalculator_roughPOC.html  
-hosted: [Github preview](http://htmlpreview.github.io/?https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuitsCalculator_roughPOC.html)
+hosted:  [Github preview](http://htmlpreview.github.io/?https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuitsCalculator_roughPOC.html)  
+         [Github cdn](https://cdn.rawgit.com/StephaneAG/circuits-calculator/master/circuitsCalculator_roughPOC.html)  
+[TestRun](https://github.com/stephaneAG/circuits-calculator/blob/master/testRun.txt)
 
 
 Early screenshots:
