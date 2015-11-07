@@ -70,3 +70,4 @@ hosted:  [Github preview](http://htmlpreview.github.io/?https://raw.githubuserco
 Early screenshots:
 <img src="http://www.stephaneadamgarnier.com/circuitsCalculator/circuits-calculator_screen1.png" align="" height="" width="" >
 <img src="http://www.stephaneadamgarnier.com/circuitsCalculator/circuits-calculator_screen2.png" align="" height="" width="" >
+ 
