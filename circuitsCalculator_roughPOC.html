@@ -19,7 +19,7 @@
     span.circuit-author {  }
     pre.info, pre.help, span.circuit-author, .symbolSelected { color: #2E78C6; }
     pre.formula, span.link { color: #919AA4; }
-    pre.formula.math { color: #56626F; }
+    pre.formula.math, p.formula.math { color: #56626F; }
     pre.formula { font-size: 20px; }
     ul { list-style: none; margin: 0;  padding: 0; }
     ul li { margin-top: 5px;  }
@@ -45,6 +45,20 @@
     #header { -webkit-box-shadow: 15px -6px 15px 10px #E6E6E6; } /*def: #ccc*/
     #inputs {  } /*TODO: add the opposite of the above here ;) */
 
+    /* keep that stylish default font style for the "escaped" text ( ex Vin -> contains 'in', so must be expressed as 'bb "Vin"' ) ==> haha: HACKED ;p  */
+    span.mstyle [style="font-family: MathJax_Fraktur;"] { font-family: MathJax_Math-italic !important; } /* know as sf cmd */
+    span.mstyle [style="font-family: MathJax_Script;"] { font-family: MathJax_Main !important; } /* known as cc cmd */
+
+    /* one line with separator / two lines "scripture" ( code / math equivalence ) */
+    div.scripture { border: 1px solid transparent; clear: both; }
+    div.scripture * {
+      /*float: left; clear: none; display: block;*/
+      /*border: 1px solid red; */ width: auto; position: relative; /*float: left*/; 
+    }
+    div.scripture pre.formula { padding-right: 20px; margin-right: 20px; border-right: 1px solid #2E78C6; float: left; }
+    div.scripture p.formula.math { position: relative; top: -2; }
+    span.horisep { display: none; }
+
     /* trying to get hw acceleration on iOS for that damn SVG ! */
     svg#tefedit {
       -webkit-transform: translate3d(0, 0, 0);
@@ -53,9 +67,7 @@
     }
 
     /* quick "can't upload imgs to github right now" fix */
-    img#appicon {
-      background-image: url('https://assets.circuits.io/assets/menu/mainmenu_appicon_adskcircuits-7ba9648f78357a1e8e3b0a3b63445dc2.png');
-    }
+    img#appicon { }
 
     /* having fun */
     html { background-color: white; } /* necessary NOT to see the borders of the schematic (R: I could also have removed the big white rect, but I kept it to have print-ready SVGs ;D ) */
@@ -114,13 +126,15 @@ repeating-linear-gradient(135deg, transparent 5px, hsla(197, 62%, 11%, 0.5) 5px,
   <script src="hammer.js"></script>
   <!-- have math formulas math-like display -->
   <!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML"></script> -->
-  <script src="ASCIIMathML.js?config=AM_HTMLorMML"></script>
+  <!-- <script src="ASCIIMathML.js?config=AM_HTMLorMML"></script> -->
+  <script src="./MathJax/MathJax.js?config=AM_HTMLorMML-full"></script>
+  <!-- <script src="./MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
 </head>
 <body>
 
 <!-- Tef info: original SVG below -->
 <div id="header">
-  <img id="appicon" alt="Mainmenu_appicon_adskcircuits" height="58" width="58"> <!-- src="appIcon.png" -->
+  <img id="appicon" alt="Mainmenu_appicon_adskcircuits" src="appIcon.png" height="58" width="58"> <!--  -->
   <p id="header-p"> [ circuit name ] <span class="circuit-author">@author</span> ( <span class="link">link1</span>, <span class="link">link2</span> )</p>
   <!-- usage, reset & default buttons here, floating right -->
 </div>
@@ -158,14 +172,49 @@ The {circuit name} Calculator calculates .. for a {circuit name} circuit
 Blablabla ..
   </pre>
   <h3 class="littltitle">formulas</h3>
-  <pre class="formula">Vout = Vin*R2/(R1+R2)</pre>
-  <pre class="formula math">`sum_(i=1)^n i^3=((n(n+1))/2)^2`</pre>
+  <!-- the following is now displayed as a scripture, see few lines below -->
+  <!-- <pre class="formula">Vout = Vin*R2/(R1+R2)</pre> -->
+  <!--
+  R: test formulas to check the "bypass styling override" hack ^^
+  CSS of the said-hack: put simply ( as it is ;p ), it allows us to keep the default styling for text that'd otherwise be interpreted as math symbols
+  Since we can ue the font cmds to specify some chars that won't get interpreted,
+  if we mix that with preventing a font override while setting the default font for a specific cmd, the cake is not a lie & we got to have it ;P
+  All that thx to the following:
+  span.mstyle [style="font-family: MathJax_Fraktur;"] { font-family: MathJax_Math-italic !important; } 
+  <p class="formula math">`VIN bb "Vin" bbb "Vin" cc "Vin" tt "Vin" fr "Vin" sf "Vin" `</p>
+  <p class="formula math">`Vout bb "Vout" bbb "Vout" cc "Vout" tt "Vout" fr "Vout" sf "Vout" `</p>
+  Also, to get an overview of the fonts name & correspondign rendering, uncomment the aboves & use the following in the js console to further highlight & check that out
+  var texts = document.querySelectorAll('span.mtext')
+  The following two were mainly used to check if the Math stuff was working & how it displayed - still a good example of syntax that can comes handy ;)
+  <p class="formula math">`sum_(i=1)^n i^3=((n(n+1))/2)^2`</p>
+  <p class="formula math">`x = (-b +- sqrt(b^2-4ac))/(2a) .`</p>
+  -->
+  <!-- the following is now displayed as a scripture, see few lines below -->
+  <!-- <p class="formula math">`Vout = fr "Vin"* (R2)/(R1+R2)`</p> --> <!-- quickest / simplest but less semantically correct that the two below - but parenthesis seems needed anyway .. -->
+  <!--
+  <p class="formula math">`Vout = fr "Vin"* bb"R2"/(R1+R2)`</p>
+  <p class="formula math">`Vout = fr "Vin"* bbb"R2"/(R1+R2)`</p>
+  <p class="formula math">`Vout = fr "Vin"* cc"R2"/(R1+R2)`</p>
+  <p class="formula math">`Vout = fr "Vin"* tt"R2"/(R1+R2)`</p>
+  -->
+  <!-- <p class="formula math">`Vout = fr "Vin"* (fr"R"cc"2")/(R1+R2)`</p> --> <!-- less quick but semantically more correct -->
+  <!-- <p class="formula math">`Vout = fr "Vin"* (fr"R""2")/(R1+R2)`</p> --> <!-- same as above but using one hack instead of two ;p -->
+  <!--
+  <p class="formula math">`Vout = fr "Vin"* sf"R2"/(R1+R2)`</p>
+  <p class="formula math">`Vout = fr "Vin"* "R2"/(R1+R2)`</p>
+  -->
+
+  <!-- quick test-implm of the "one line if enough space, two if not" formulas' code <-> math scripture equivalence -->  
+  <div class="scripture">
+    <pre class="formula">Vout = Vin*R2/(R1+R2)</pre> <!-- <span class="horisep">  |  </span> --> <p class="formula math">`Vout = fr "Vin"* (R2)/(R1+R2)`</p>
+  </div>
+
   <h3 class="littltitle">fields</h3>
   <ul>
     <li> <span class="prefix"> Vin </span> <input id="input_Vin" name="input_Vin" class="field" type="text"> <span class="suffix"> V </span> </li>
     <li> <span class="prefix"> Vout </span> <input id="input_Vout" name="input_Vout" class="field" type="text"> <span class="suffix"> V </span> </li>
-    <li> <span class="prefix"> R1 </span> <input id="input_R1" name="input_R1" class="field" type="text"> <span class="suffix"> Ω </span> </li>
-    <li> <span class="prefix"> R2 </span> <input id="input_R2" name="input_R2" class="field" type="text"> <span class="suffix"> Ω </span> </li>
+    <li> <span class="prefix"> R1 </span> <input id="input_R1" name="input_R1" class="field" type="text"> <span class="suffix"> &Omega; </span> </li> <!-- no more Ω 'cause of MathML -->
+    <li> <span class="prefix"> R2 </span> <input id="input_R2" name="input_R2" class="field" type="text"> <span class="suffix"> &Omega; </span> </li>
   </ul>
   <h3 class="littltitle">help</h3>
   <pre class="help">
