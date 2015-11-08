@@ -68,8 +68,8 @@ hosted:  [Github preview](http://htmlpreview.github.io/?https://raw.githubuserco
 
 
 Early screenshots:
-<img src="http://www.stephaneadamgarnier.com/circuitsCalculator/circuits-calculator_screen1l.png" align="" height="" width="" >
-<img src="http://www.stephaneadamgarnier.com/circuitsCalculator/circuits-calculator_screen2l.png" align="" height="" width="" >
+<img src="http://www.stephaneadamgarnier.com/circuitsCalculator/circuits-calculator_screen1wip.png" align="" height="" width="" >
+<img src="http://www.stephaneadamgarnier.com/circuitsCalculator/circuits-calculator_screen2wip.png" align="" height="" width="" >
   
 #### Adding circuits:
 
