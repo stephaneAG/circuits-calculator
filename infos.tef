@@ -1,0 +1,772 @@
+# R: the SVG extracted from 123DCircuits's .hasSVG div has to be prettified, & this was done using the following:
+http://xmlprettyprint.com/
+
+# getting the SVG:
+var theSVG = document.querySelector('.hasSVG').children[0]
+
+# getting all tspans:
+# R/Nb: since some letters are "constants" for the [ standard ] labelling of the components, we could deduce that tspans that follows are part of the same element:
+#       ex: if we get a 'R', it's a resistor, & thus it needs a name ( label ) & a value ( <n> Ohms ), hence the 2 items following a 'R' in the tspansContent array are part of the same element
+# -> this could be handy when using "specific patterns" for further parsing, & to generate IDs from that ;p
+var tspans = theSVG.querySelectorAll('tspan'); var tspansContent = []; for (var i=0; i < tspans.length; i++){ tspansContent.push( tspans[i].textContent ); }
+tspansContent
+["R", "1", "0Ω", "Vin", "Vout", "R", "2", "0Ω"]
+
+# in our edited SVG, we can now get stuff out using the following:
+var cc_fields = document.querySelectorAll('.cc_field'); var cc_fieldsContent = []; for (var i=0; i < cc_fields.length; i++){ cc_fieldsContent.push( cc_fields[i].textContent ); }
+cc_fieldsContent
+["0Ω", "Vin", "Vout", "0Ω"]
+
+# now, to get/set one's value, we have few options:
+cc_fieldsContent[0]
+"0Ω"
+
+cc_fields[0].textContent
+"0Ω"
+
+cc_fields[0].textContent = "110Ω"
+"110Ω"
+
+# for the labels, it could be nice to APPEND instead of replace ( aka, NOT replace the label by its value but ADD to it )
+cc_fields[1].textContent = cc_fields[1].textContent + ": 12V"
+"Vin: 12V"
+
+# now, to "blue" the schematic stuff when a field is being edited / a symbol is clicked, we have to digg the following:
+# 1st, it seems that 2 groups share the same ID ( ???! )
+var elemsBeingEdited = document.querySelectorAll('#id_150cdd4600c-22-fdcef1b5-cf51-450a-999e-f7d54566b485_1');
+var symbol = elemsBeingEdited[0]; var text = elemsBeingEdited[1]
+
+# to make the text blue, we can simply do
+text.style.fill = "#2E78C6"
+
+# to make an exisitng component blue, it's a littl' bit more tricky
+# this is possible, but not handy here:
+var symbol_AllBlacks_fill = symbol.querySelectorAll('[fill]')
+var symbol_AllBlacks_stroke = symbol.querySelectorAll('[stroke]')
+# but the following is quite handy:
+var thoseChildren = symbol.children[0].children[0].children[0].children
+
+# colored debug
+for (var i=0; i < thoseChildren.length; i++){
+  console.log( '--' + thoseChildren[i] + '--' )
+  console.log( 'STROKE: %c' + thoseChildren[i].style.stroke, 'background: grey; color: ' + thoseChildren[i].style.stroke);
+  console.log( 'FILL:   %c' + thoseChildren[i].style.fill, 'background: grey; color: ' + thoseChildren[i].style.fill); 
+}
+
+# hence, to make the symbol + adjacent short lines blue:
+for (var i=0; i < thoseChildren.length; i++){
+  console.log( thoseChildren[i].style.stroke, 'color:' + thoseChildren[i].style.stroke );
+  thoseChildren[i].style.stroke = thoseChildren[i].style.stroke === "rgb(0, 0, 0)" ?  "#2E78C6": thoseChildren[i].style.stroke; 
+}
+
+# and to go "back to black" ;p ( rip Amy )
+for (var i=0; i < thoseChildren.length; i++){
+  console.log( thoseChildren[i].style.stroke, 'color:' + thoseChildren[i].style.stroke );
+  thoseChildren[i].style.stroke = thoseChildren[i].style.stroke === "rgb(46, 120, 198)" ?  "rgb(0, 0, 0)": thoseChildren[i].style.stroke; 
+}
+
+# to add an event listener to them, we can use the following, or just add it to the text of the symbol & colorize both ( the event seems not triggered when the symbol is clicked ? )
+for (var i=0; i < elemsBeingEdited.length; i++){ elemsBeingEdited[i].addEventListener('click', function(){ console.log('item clicked -> TODO: focus corresponding field ! :D') }); }
+# or, to just add the listener to the symbol's text
+elemsBeingEdited[1].addEventListener('click', function(){ console.log('sybol text clicked -> TODO: focus corresponding field & colorise it & symbol ! :D') });
+
+# to scroll to & focus a field, the following is qurely handy:
+#document.querySelector('#input_Vin').scrollIntoView().focus();
+document.querySelector('#input_Vin').scrollIntoView(); document.querySelector('#input_Vin').focus();
+# R: to test it while debugging js in the console, use the timed-out version ;p
+#setTimeout(function(){ document.querySelector('#input_Vin').scrollIntoView().focus(); console.log('pouet'); }, 3000 );
+setTimeout(function(){ document.querySelector('#input_Vin').scrollIntoView(); document.querySelector('#input_Vin').focus();  }, 3000 );
+
+
+# to toggle the visibility of the left side pane, we can easily do so:
+var theMenuBtn = document.querySelector('#appicon');  var sidePane = document.querySelector('#circuitspane');
+var header = document.querySelector('#header'); var inputs = document.querySelector('#inputs');
+
+theMenuBtn.addEventListener('click', function(){
+  if (sidePane.classList.contains('visible') ){
+    console.log( 'hiding side pane ..' );
+    header.style.marginLeft = "0px";
+    inputs.style.marginLeft = "0px";
+    sidePane.style.width = "0px";
+    sidePane.style.padding = "0px";
+    sidePane.classList.toggle('visible');
+  } else {
+    console.log( 'showing side pane ..' );
+    header.style.marginLeft = "320px";
+    inputs.style.marginLeft = "320px";
+    sidePane.style.width = "300px";
+    sidePane.style.padding = "10px";
+    sidePane.classList.toggle('visible');
+  }
+});
+
+
+# to add a particular circuit json's "calculate()" ( javascript function ), we have multiple choices
+# nb: here, we choose to "source" the "calculate()" function when a circuit is loaded, but we could also just call it directly ( .. )
+# ps: we could also ask the user if he wishes to use an external javascript file to contain the "calculate()" function
+#     ( may be useful if some particular implementation needs extra helper functions, & if so, get the js content in the obj.calculate )
+#     also, the ability to detect a specific prefix, like 'url://<circuit_name>' ( or it's absence ) could allow deducing external files
+var myJsObj = {
+  calculate: 'function calculate(){ console.log("Hello Wolrd !"); }',
+  info: 'test'
+};
+# "source" using "eval()" ( /!\ "eval is evil" ;P )
+eval ( myJsObj.calculate )
+# "source" using <script> textContent
+var aScript = document.createElement('script');
+aScript.textContent = myJsObj.calculate;
+document.body.appendChild( aScript );
+# if we wanna use the src of the <script> instead
+var aScript = document.createElement('script');
+aScript.src = "data:text/javascript;base64," + btoa( myJsObj.calculate );
+document.body.appendChild( aScript );
+# and after sourcing it, we can invoke it whenever we want ( presumably when hitting the 'Enter' key on a field )
+calculate()
+
+# to get a value & a unity from a string that contains both, we can use the following
+var valueStr = "110Ω";
+var valueStrArr = valueStr.split('');
+for( var i=0; i<= valueStrArr.length; i++){
+  if (isNaN(parseInt(valueStrArr[i]))) {
+    idx = i;
+    break;
+  }
+}
+# the above returns '3', hence
+var actualValue = valueStr.substr(0, 3)
+# prints "110"
+var unity = valueStr.substr(3)
+# prints "Ω"
+
+
+
+# for the json part, let's examine what we have here - also R /!\ WHEN USING COMMENTS IN A .JSON, NAME THEM OR THE'LL BE REWRITTEN !!!
+var myJsObj= {
+  "_comment_circuit": "the name of the circuit - generated ",
+  circuit: 'Voltage Divider',
+  
+  "_comment_author": "the author",
+  author: 'StephaneAG',
+  
+  "_comment_links": "link(s) related to the circuit ( can be either links to webpage or to circuit://<circuit_name>)",
+  links: [ 
+           '123D|123DCircuits.com', 
+           'circuit://voltage_divider_alt'
+         ],
+         
+  "_comment_notice": "the grey-ish notice in the infos pane",
+  notice: 'Enter any three values to calculate the remaining value',
+  
+  "_comment_infos": "the main circuit infos",
+  infos: [
+           'The {circuit name} Calculator calculates .. for a {circuit name} circuit',
+           'Blablabla ..'
+         ],
+         
+  "_comment_formulas": "the formula(s) used to calculate stuff out ( stuff within backticks = add math-like notation )",
+  formulas: [
+              'Vout = Vin*R2/(R1+R2)|`sum_(i=1)^n i^3=((n(n+1))/2)^2`'
+            ],
+            
+  "_comment_fields": "the interactive fields from which the calculate() function deduces stuff out - generated",
+  fields: [
+            'Vin|V|the input voltage',
+            'Vout|V|the output voltage',
+            'R1|Ω',
+            'R2|Ω'
+          ],
+  
+  "_comment_calculate": "the calculate() function that deduces stuff out from the values in the interactive fields",
+  calculate: 'function calculate(){ console.log("Hello Wolrd !"); }',
+          
+  "_comment_help": "some help / further explanation on the circuit",
+  help: [
+          'Input values can be cleared using the refresh button',
+          'Values can be changed either by tapping schematic symbols or their respective text fields',
+          'Provide any of the three available values abd the remaining value + resistor current will be calculated & displayed'
+        ]
+}
+# to get an actual JSON from that js obj, we just have to
+var json = JSON.stringify( myJsObj )
+# if we wanted it to be pretty printed, we could use the following instead
+var jsonPretty = JSON.stringify(myJsObj, null, 2); // spacing level = 2
+# also, if we already had a non-pretty-printed JSON string & wanted it pretty-printed
+var jsonPretty = JSON.stringify(JSON.parse(json),null,2);
+# R: the following link has a pretty nice example I'd like to hack in the js console => 'd be terrrible ( in the good way ! ^^ ) ;D
+
+
+
+# now, to get stuff hosted on the github repo without needing credentials, the following comes in handy
+# json-p
+https://api.github.com/users/StephaneAG/repos?callback=?
+# json
+https://api.github.com/users/StephaneAG/repos?
+# also, to get stuff on the circuits-calculator repo, we have the following
+https://api.github.com/repos/stephaneag/circuits-calculator/contents
+# the following leads us to our "circuits" directory, which holds the circuits .svg & .json
+https://api.github.com/repos/stephaneag/circuits-calculator/contents/circuits
+# we could also use json-p
+https://api.github.com/repos/stephaneag/circuits-calculator/contents/circuits?callback=console.log
+
+
+# So! ^^
+# the object we have back from the "https://api.github.com/repos/stephaneag/circuits-calculator/contents/circuits" call is the following
+var githubCircuits = [
+  {
+    "name": "voltage_divider.json",
+    "path": "circuits/voltage_divider.json",
+    "sha": "5aa943551562082dfd087972b47db92626ba6060",
+    "size": 1662,
+    "url": "https://api.github.com/repos/stephaneAG/circuits-calculator/contents/circuits/voltage_divider.json?ref=master",
+    "html_url": "https://github.com/stephaneAG/circuits-calculator/blob/master/circuits/voltage_divider.json",
+    "git_url": "https://api.github.com/repos/stephaneAG/circuits-calculator/git/blobs/5aa943551562082dfd087972b47db92626ba6060",
+    "download_url": "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/stephaneAG/circuits-calculator/contents/circuits/voltage_divider.json?ref=master",
+      "git": "https://api.github.com/repos/stephaneAG/circuits-calculator/git/blobs/5aa943551562082dfd087972b47db92626ba6060",
+      "html": "https://github.com/stephaneAG/circuits-calculator/blob/master/circuits/voltage_divider.json"
+    }
+  },
+  {
+    "name": "voltage_divider.jsonInJs",
+    "path": "circuits/voltage_divider.jsonInJs",
+    "sha": "d051a916109fe7390a3371f88839c1104b2d4513",
+    "size": 1815,
+    "url": "https://api.github.com/repos/stephaneAG/circuits-calculator/contents/circuits/voltage_divider.jsonInJs?ref=master",
+    "html_url": "https://github.com/stephaneAG/circuits-calculator/blob/master/circuits/voltage_divider.jsonInJs",
+    "git_url": "https://api.github.com/repos/stephaneAG/circuits-calculator/git/blobs/d051a916109fe7390a3371f88839c1104b2d4513",
+    "download_url": "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.jsonInJs",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/stephaneAG/circuits-calculator/contents/circuits/voltage_divider.jsonInJs?ref=master",
+      "git": "https://api.github.com/repos/stephaneAG/circuits-calculator/git/blobs/d051a916109fe7390a3371f88839c1104b2d4513",
+      "html": "https://github.com/stephaneAG/circuits-calculator/blob/master/circuits/voltage_divider.jsonInJs"
+    }
+  },
+  {
+    "name": "voltage_divider.svg",
+    "path": "circuits/voltage_divider.svg",
+    "sha": "4db3101c57d546f5cd084e857912c53c76b4671e",
+    "size": 16869,
+    "url": "https://api.github.com/repos/stephaneAG/circuits-calculator/contents/circuits/voltage_divider.svg?ref=master",
+    "html_url": "https://github.com/stephaneAG/circuits-calculator/blob/master/circuits/voltage_divider.svg",
+    "git_url": "https://api.github.com/repos/stephaneAG/circuits-calculator/git/blobs/4db3101c57d546f5cd084e857912c53c76b4671e",
+    "download_url": "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/stephaneAG/circuits-calculator/contents/circuits/voltage_divider.svg?ref=master",
+      "git": "https://api.github.com/repos/stephaneAG/circuits-calculator/git/blobs/4db3101c57d546f5cd084e857912c53c76b4671e",
+      "html": "https://github.com/stephaneAG/circuits-calculator/blob/master/circuits/voltage_divider.svg"
+    }
+  }
+]
+# since this dir may contain .info, .md or other stuff as well, we strip anything else that might reside there
+var circuitsStuff = [];
+for(var i=0; i < githubCircuits.length; i++){
+  //console.log( githubCircuits[i].name )
+  var ext = githubCircuits[i].name.substr( githubCircuits[i].name.indexOf('.')+1 );
+  //console.log(  ext );
+  if( ext === 'svg' || ext === 'json' || ext === 'js' ){
+    circuitsStuff.push(
+      {
+        name: githubCircuits[i].name,
+        url: githubCircuits[i].download_url
+      }
+    );
+  }
+}
+# that gives us objects like this
+{
+  name: "voltage_divider.json"
+  url: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.json"
+}
+# all that's left to do is assemble the pieces in proper circuit objs ( aka, "semantically grouped" )
+for(var i=0; i < githubCircuits.length; i++){
+  //console.log( githubCircuits[i].name )
+  var ext = githubCircuits[i].name.substr( githubCircuits[i].name.indexOf('.')+1 );
+  //console.log(  ext );
+  if( ext === 'svg' || ext === 'json' || ext === 'js' ){
+    circuitsStuff.push(
+      {
+        name: githubCircuits[i].name,
+        url: githubCircuits[i].download_url
+      }
+    );
+  }
+}
+
+
+var circuitsObjs = [];
+for(var i=0; i < circuitsStuff.length; i++){
+  var circuit = {};
+  var nameWithoutExt = circuitsStuff[i].name.substr( 0, circuitsStuff[i].name.indexOf('.') );
+  circuit.name = nameWithoutExt;
+  //console.log(  ext );
+  for(var j=0; j< circuitsStuff.length; j++){
+    if( nameWithoutExt === circuitsStuff[i].name.substr( 0, circuitsStuff[i].name.indexOf('.') ) ){
+    //if( circuitsStuff[i].name != circuitsStuff[j].name && nameWithoutExt === circuitsStuff[i].name.substr( 0, circuitsStuff[i].name.indexOf('.') ) ){
+      var ext = circuitsStuff[j].name.substr( circuitsStuff[j].name.indexOf('.')+1 );
+      if( ext === 'svg'){ circuit.svg = circuitsStuff[j].name; circuit.svgUrl = circuitsStuff[j].url; }
+      else if( ext === 'json'){ circuit.json = circuitsStuff[j].name; circuit.jsonUrl = circuitsStuff[j].url; }
+      else if( ext === 'svg'){ circuit.js = circuitsStuff[j].name; circuit.jsUrl = circuitsStuff[j].url; }
+      //circuitsStuff.splice(j, 1);
+      //circuitsStuff.splice(i, 1);
+    }    
+  }
+  circuitsStuff.splice(i, 1);
+  circuitsObjs.push( circuit );
+}
+//console.log( circuitsObjs[0] )
+# this gives us stg like
+{
+  json: "voltage_divider.json"
+  jsonUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.json"
+  name: "voltage_divider"
+  svg: "voltage_divider.svg"
+  svgUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg"
+}
+
+# to fetch the necessary content & use it to populate our circuit objs, we can use the following
+var circuitsObjs = [];
+
+circuitsObjs.push( {name: "voltage_divider", json: "voltage_divider.json", jsonUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.json", svg: "voltage_divider.svg", svgUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg"} );
+
+var xhrCntr = 0; // 'll be incremented for each request made ( aka for each json/js/svg url ), & checked against at the end to know if everything is DL-ed & hence if we can continue populating our objs
+
+var xhr = new XMLHttpRequest();
+xhr.idx = 0; // the index of the corresponding object in the array
+xhr.trgt = 'jsonF'; // the name of the key to add to it ( here, jsonFile )
+xhr.open('GET', circuitsObjs[0].jsonUrl, true);
+xhr.onreadystatechange = function (aEvt) {
+  if (xhr.readyState == 4) {
+    if(xhr.status == 200){
+      console.log(xhr.responseText);
+      console.log( 'index: ' + xhr.idx + ' target: ' + xhr.trgt);
+      circuitsObjs[xhr.idx][xhr.trgt] = xhr.responseText; 
+      circuitsObjs[xhr.idx][xhr.trgt+'C'] = JSON.parse(xhr.responseText); // js obj direct
+    } else {
+      console.log("Erreur pendant le chargement de la page.\n");
+    }
+    xhrCntr++;
+    if( xhrCntr === circuitsObjs.length ) console.log('downloads done -> onto further processing & populating ;P !'); else console.log('.. still request(s) to go ..');
+  }
+};
+xhr.send(null);
+
+
+
+# weirdly enough, the following doesn't quite work as expected, and I actually miss something ..
+var circuitsObjs = [];
+
+circuitsObjs.push( {name: "voltage_divider", json: "voltage_divider.json", jsonUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.json", svg: "voltage_divider.svg", svgUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg"} );
+circuitsObjs.push( {name: "voltage_divider", json: "voltage_divider.json", jsonUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.json", svg: "voltage_divider.svg", svgUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg"} );
+
+circuitsObjs
+var xhrCntr = 0; // 'll be incremented for each request made ( aka for each json/js/svg url ), & checked against at the end to know if everything is DL-ed & hence if we can continue populating our objs
+
+for(var i=0; i < circuitsObjs.length; i++){
+  console.log('circuit index: ' + i)
+  var xhr = new XMLHttpRequest();
+  xhr.idx = i; // the index of the corresponding object in the array
+  xhr.trgt = 'jsonF'; // the name of the key to add to it ( here, jsonFile )
+  xhr.open('GET', circuitsObjs[i].jsonUrl, true);
+  xhr.onreadystatechange = function (aEvt) {
+    if (xhr.readyState == 4) {
+      if(xhr.status == 200){
+        //console.log(xhr.responseText);
+        console.log( 'index: ' + xhr.idx + ' target: ' + xhr.trgt);
+        circuitsObjs[xhr.idx][xhr.trgt] = xhr.responseText; 
+        circuitsObjs[xhr.idx][xhr.trgt+'C'] = JSON.parse(xhr.responseText); // js obj direct
+      } else {
+        console.log("Erreur pendant le chargement de la page.\n");
+      }
+      xhrCntr++;
+      if( xhrCntr === circuitsObjs.length ) console.log('downloads done -> onto further processing & populating ;P !'); else console.log('.. still request(s) to go ..');
+    }
+  };
+  xhr.send(null);
+}
+
+# ALL RIGHT ! -> stg I didn't knew & the fix:
+# when the ready state change callback is fired it 's using the i variable from the containing scope 
+# which will be the length of the array after the loop completes.
+#
+# to solve this, we use an immediately invoked function expression for each loop iteration 
+# so that the code inside the function has its own i
+# 
+# the magic of JS closures means that when the onreadystatechange function is called it will access the parameter i 
+# of the anonymous function (even though that function has completed), not the i of the outer scope, 
+# so the right nRequest element will be processed each time.
+#
+#
+# this being said, the other ( more used ) approach is still relevant ( but the below one is good to know, and takes less space ;p )
+# other approach: don't need an array of requests at all: just encapsulate the Ajax code into a function that takes a URL and a callback function as parameters, and then call that function in the loop...
+var circuitsObjs = [];
+
+circuitsObjs.push( {name: "voltage_divider", json: "voltage_divider.json", jsonUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.json", svg: "voltage_divider.svg", svgUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg"} );
+circuitsObjs.push( {name: "voltage_divider", json: "voltage_divider.json", jsonUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.json", svg: "voltage_divider.svg", svgUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg"} );
+
+circuitsObjs
+var xhrCntr = 0; // 'll be incremented for each request made ( aka for each json/js/svg url ), & checked against at the end to know if everything is DL-ed & hence if we can continue populating our objs
+
+var xhrs = []; // test ?
+for(var i=0; i < circuitsObjs.length; i++){
+ (function(i) { // MANDATORY
+  console.log('circuit index: ' + i)
+  //var xhr = new XMLHttpRequest();
+  xhrs[i] = new XMLHttpRequest();
+  xhrs[i].idx = i; // the index of the corresponding object in the array
+  xhrs[i].trgt = 'jsonF'; // the name of the key to add to it ( here, jsonFile )
+  xhrs[i].open('GET', circuitsObjs[i].jsonUrl, true);
+  xhrs[i].onreadystatechange = function (aEvt) {
+    if (xhrs[i].readyState == 4) {
+      if(xhrs[i].status == 200){
+        //console.log(xhr.responseText);
+        console.log( 'index: ' + xhrs[i].idx + ' target: ' + xhrs[i].trgt);
+        circuitsObjs[xhrs[i].idx][xhrs[i].trgt] = xhrs[i].responseText; 
+        circuitsObjs[xhrs[i].idx][xhrs[i].trgt+'C'] = JSON.parse(xhrs[i].responseText); // js obj direct
+      } else {
+        console.log("Erreur pendant le chargement de la page.\n");
+      }
+      xhrCntr++;
+      if( xhrCntr === circuitsObjs.length ) console.log('downloads done -> onto further processing & populating ;P !'); else console.log('.. still request(s) to go ..');
+    }
+  };
+  xhrs[i].send(null);
+ })(i); // MANDATORY
+}
+# the above gently gives us an update on our array elements
+# the "jsonFC" key holds the data parsed from the json fetched
+{
+  json: "voltage_divider.json"
+  jsonF: <the_json_stuff>
+  jsonFC: Object
+  jsonUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.json"
+  name: "voltage_divider"
+  svg: "voltage_divider.svg"
+  svgUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg"
+}
+
+# R: we'll have to handle json ( as above ), svg ( below wip ) & js ( as a <script> file to be included if we don't wanna use evil ;p )
+var circuitsObjs = [];
+
+circuitsObjs.push( {name: "voltage_divider", json: "voltage_divider.json", jsonUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.json", svg: "voltage_divider.svg", svgUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg"} );
+circuitsObjs.push( {name: "voltage_divider", json: "voltage_divider.json", jsonUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.json", svg: "voltage_divider.svg", svgUrl: "https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg"} );
+
+var xhrCntr = 0;
+
+window.tefStuff = []; // wip debug
+window.tefStuff2 = []; // wip debug
+
+var xhrs = []; // test ?
+for(var i=0; i < circuitsObjs.length; i++){
+ (function(i) { // MANDATORY
+  console.log('circuit index: ' + i)
+  //var xhr = new XMLHttpRequest();
+  xhrs[i] = new XMLHttpRequest();
+  xhrs[i].idx = i; // the index of the corresponding object in the array
+  xhrs[i].trgt = 'svgF'; // the name of the key to add to it ( here, jsonFile )
+  //xhrs[i].responseType = "blob"; // 'll allow us to directly use querySelector & stuff ;p
+  //xhrs[i].open('GET', circuitsObjs[i].svgUrl, true);
+  xhrs[i].open('GET', circuitsObjs[i].svgUrl.replace('raw.githubusercontent', 'cdn.rawgit'), true); // correct url to be served images
+  xhrs[i].onreadystatechange = function (aEvt) {
+    if (xhrs[i].readyState == 4) {
+      if(xhrs[i].status == 200){
+        //console.log(xhr.responseText);
+        //console.log(xhrs[i].response);
+        console.log( 'index: ' + xhrs[i].idx + ' target: ' + xhrs[i].trgt);
+        circuitsObjs[xhrs[i].idx][xhrs[i].trgt] = xhrs[i].responseText; //responseText; 
+        circuitsObjs[xhrs[i].idx][xhrs[i].trgt+'C'] = new DOMParser().parseFromString(xhrs[i].responseText, 'text/xml'); // svg obj direct
+        window.tefStuff.push( new DOMParser().parseFromString(xhrs[i].responseText, 'text/xml') );
+        window.tefStuff2.push( xhrs[i].responseXML );
+        // try 'image/svg+xml' for the above ? ( except for the 2 labels, nothing gets displayed with the aboe :/ )
+      } else {
+        console.log("Erreur pendant le chargement de la page.\n");
+      }
+      xhrCntr++;
+      if( xhrCntr === circuitsObjs.length ) console.log('downloads done -> onto further processing & populating ;P !'); else console.log('.. still request(s) to go ..');
+    }
+  };
+  xhrs[i].send(null);
+ })(i); // MANDATORY
+}
+# well .. the svg is here ,but renders weirdly ?! ( aka only the labels are rendered ???!! )
+# MAY comes from github url & svg .. as whatever I try, I only get those 2 little labels rendered ( while I got everything on the page, that's crazy! :/ )
+# using the following URL ,it works flawlessly ..
+https://cdn.rawgit.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg
+# differs a little from the below one, that's NOT working
+https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuits/voltage_divider.svg
+# .. but R we have to edit it afterward ( I guess it 'll be possible even if we get it this way .. & hope so otherwise I don't know yet how to hack that out afterward .. but it WILL work )
+# we just have to replace the SVGs urls by modded ones using the above server ;P
+
+# DAMN IT !! I lost almost an hour on a stupid displacement ( "translate" call without the css to fix stuff up :/ )
+# all right -> this is wayy too cumbersome to debug "as is", but using the following url & the above code, we can work ouselves just fine  the belo stuff ;D
+# URL : http://htmlpreview.github.io/?https://raw.githubusercontent.com/stephaneAG/circuits-calculator/master/circuitsCalculator_roughPOC.html
+var tefSvg = document.querySelector('#tefedit')
+tefSvg.children[1].parentNode.removeChild( tefSvg.children[1] ) // remove the previous schematic
+tefSvg.appendChild( tefStuff2[1].children[0].children[0] ) // add the new one inside the <svg> tags of the first one ;p
+# Nb: we'll have to store in localStorage the "state" of the schematic & view in order to come back to it as nicely as a native app ;p ( R: was a pain in the butt for urls, thnk zombie)
+
+# NB /!\ in the file://// url, the following seemed to work flawlessly, while the above had unknown troubles ?
+tefSvg.children[0].removeChild( tefSvg.children[0].children[1] )
+tefSvg.children[0].appendChild( tefStuff2[1].children[0].children[0] )
+
+
+# Nooooow: onto localStorage & chache stuff ( a littl' bit later for the cache stuff .. )
+# for our syntax
+// we 'll store our circuits as so ..
+localStorage.setItem('circuit:'+<circuit_name>, <circuit_obj>);
+// .. and retrieve them as follows
+localStorage.getItem('circuit:'+<circuit_name>);
+# and for real .. just kidding => stringify that s**t ! :D
+localStorage.setItem('circuit:'+circuitsObjs[0].name, circuitsObjs[0]);
+localStorage.getItem('circuit:'+circuitsObjs[0].name);
+# or maybe this one, as I can't manage to get out the previous one :/ ?!
+localStorage.setItem('circuit:'+circuitsObjs[0].name, JSON.stringify( circuitsObjs[0]) );
+JSON.parse( localStorage.getItem('circuit:'+circuitsObjs[0].name) )
+
+
+## onto SVG animation ;p
+# R: to do the following tests, I was in the preview page of the voltage divider page on 123DCircuits
+var theSchematci = document.querySelector('.js-tpl-target__schematic') // get the schematic
+theSchematci.querySelectorAll('path') // prints out all the pathes contained - can be easily animated
+theSchematci.querySelectorAll('g') // prints all the groups contained - 'll require a littl' trick(s) to be easily animated ?
+var Gnd = theSchematci.querySelectorAll('path') // yup, the only <path> stuff we have is the Gnd symbol here
+var lengths = []; // we fetch the lengths of the different pathes that builds up the Gnd symbol
+// we get the length of these pathes
+for(var i=0; i < Gnd.length; i++){
+  lengths[i] = Gnd[i].getTotalLength();
+}
+// we set the 'strokeDasharray' style property to be equal to each path's own length
+for(var i=0; i < Gnd.length; i++){
+  Gnd[i].style.strokeDasharray = lengths[i];
+}
+// from now, we can play with the offset:
+// by setting it to 0, we show the entire path
+first.style.strokeDashoffset = 0
+// by setting it to stg between 0 and the path's length, we show a part of the entire path*
+first.style.strokeDashoffset = lengths[0] / 2
+// and by setting it to the path's length, we hide it entirely ;p
+first.style.strokeDashoffset = lengths[0]
+//* as we do so, we have the path ( if horizontal, as in my case ) drawn from right to left: we can invert that by using the following
+first.style.strokeDashoffset = -lengths[0] + lengths[0] / 2
+// R: this is equivalent to setting to 0 - aka showing the entire path
+first.style.strokeDashoffset = -lengths[0] + lengths[0]
+// R: this is equivalent to setting it to the path's length - except we use use a negative value from the length
+first.style.strokeDashoffset = -lengths[0]
+
+// quickly animate that out, we can use CSS animations or CSS transitions: I'll go for the latter, since it's very littl' overhead :)
+// this 'll transition the changes in stroke-dashoffset ( <elem>.style.strokeDashoffset )
+// Nb: originally .2s, but was a bit too quick & .4s was a bit too long
+// Nb2: we could also set a specific/constraint-randomed transition delay ( or duration ) [ that could be based on the length of the said-path ] ;p
+.js-tpl-target__schematic path {  -webkit-transition: stroke-dashoffset .3s; }
+// quick check, but we already set the strokeDasharray values previously ;)
+for(var i=0; i < Gnd.length; i++){
+  console.log ( Gnd[i].style.strokeDasharray );
+}
+// hence, to animate all the pathes of the Gnd symbol, we can use the following:
+// hide all of them to the right
+for(var i=0; i < Gnd.length; i++){
+  Gnd[i].style.strokeDashoffset = lengths[i];
+}
+// ( to hide all of them to the left )
+for(var i=0; i < Gnd.length; i++){
+  Gnd[i].style.strokeDashoffset = -lengths[i];
+}
+// show all of them
+for(var i=0; i < Gnd.length; i++){
+  Gnd[i].style.strokeDashoffset = 0;
+}
+
+// now, onto SVG lines ( next, we'll have to treat rects as well, since they're used a lot to draw components ;p )
+var lines = theSchematci.querySelectorAll('line')
+// contrary to pathes, lines do NOT have a getTotalLength() fcn available, so we'll have to write our own
+// we just need to compute stuff from the line's x1,x2,y1 & y2 values, & use Pythagore formula to find it's length ;p
+function getLineWidth(svgLine){
+  var x1 = svgLine.x1.baseVal.value,
+      y1 = svgLine.y1.baseVal.value,
+      x2 = svgLine.x2.baseVal.value,
+      y2 = svgLine.y2.baseVal.value;
+
+  var xLen = x1 > x2 ? x1 - x2 : x2 - x1,
+      yLen = y1 > y2 ? y1 - y2 : y2 - y1;
+
+  // Nb: we could have just returned the Len that's different than 0 instead of the following ;p
+  return Math.sqrt( Math.pow(xLen, 2) + Math.pow(yLen, 2) );
+}
+// yup, tested, and it works !! :D -> we just have to update our CSS
+.js-tpl-target__schematic path, .js-tpl-target__schematic line {  -webkit-transition: stroke-dashoffset .3s; }
+// we first, as usual, set the strokeDasharray prop on our element, this time, using OUR helper
+firstLine.style.strokeDasharray = getLineWidth( firstLine );
+//  then, we can hide totally the line
+firstLine.style.strokeDashoffset = getLineWidth( firstLine );
+// or show it entirely
+firstLine.style.strokeDashoffset = 0;
+// Now, we can do that for all the lines in our schematic :D
+var lengths = [];
+// get the lines length
+for(var i=0; i < lines.length; i++){
+  lengths[i] = getLineWidth( lines[i] );
+}
+// set the elements strokeDasharray prop to their actual length
+for(var i=0; i < lines.length; i++){
+  lines[i].style.strokeDasharray = lengths[i];
+}
+// & now, hide or show them ALL !!! :P
+// hide - top-to-bottom, left-to-right
+for(var i=0; i < lines.length; i++){
+  lines[i].style.strokeDashoffset = lengths[i];
+}
+// show - "de-offset", aka make the opposite effect than when hiding it using the aboe & below calls 
+for(var i=0; i < lines.length; i++){
+  lines[i].style.strokeDashoffset = 0;
+}
+// hide - top-to-bottom, left-to-right
+for(var i=0; i < lines.length; i++){
+  lines[i].style.strokeDashoffset = -lengths[i];
+}
+
+// now onto the circles ! :D
+// we wanna transition their "r" ( from 0 to whatever it is) -> 'll be cute to see that pop in between liens ;p
+// Nb: since it seems that white circles are used for some labels, we keep our interest on visible, black ones
+var circles = theSchematci.querySelectorAll('circle[fill=black]')
+// then, we just have to updte our css rules to handle the transition of radius for the circles
+.js-tpl-target__schematic circle {  -webkit-transition: r .3s; }
+// we can store the original radiuses, in case some are different than 2 ;)
+var radiuses = []
+for(var i=0; i < circles.length; i++){
+  radiuses[i] = circles[i].r.baseVal.value;
+}
+// then, we can transition them visible
+for(var i=0; i < circles.length; i++){
+  circles[i].r.baseVal.value = radiuses[i];
+}
+// or hidden
+for(var i=0; i < circles.length; i++){
+  circles[i].r.baseVal.value = 0;
+}
+
+// all right, now onto the rects . ;D
+// it seems that additionally to have a similar id, they share a common height
+// TODO: digg these ids, & check if it's used by the Autodesk team to "classify" symbols's SVG elements
+var rects  = theSchematci.querySelectorAll('rect[height="30"]')
+// or
+var rects  = theSchematci.querySelectorAll('rect[id=rect8575]')
+// same as for lines, rects do NOT have a getTotalLength() fcn available, so we'll have to write our own
+// we just need to compute stuff from the rect's bouding client rect height & width values, & sum that to find it's length ;p
+function getRectLen(svgRect){
+  var BCR = svgRect.getBoundingClientRect();
+
+  return 2*BCR.height + 2*BCR.width;
+}
+// now, we can store the original lengths of our rects to later transition them ;)
+var lengths = [];
+// get the rects length
+for(var i=0; i < rects.length; i++){
+  lengths[i] = getRectLen( rects[i] );
+}
+// set the elements strokeDasharray prop to their actual length
+for(var i=0; i < rects.length; i++){
+  rects[i].style.strokeWidth = 1;
+  //rects[i].style.strokeDasharray = lengths[i]; // seems to cut a part of the rects without the above
+}
+// anyway, neverminding the above ( aka, why is it doing that ??! ), we can still transition our stuff :)
+.js-tpl-target__schematic path, .js-tpl-target__schematic line, .js-tpl-target__schematic rect {  -webkit-transition: stroke-dashoffset .3s, stroke-width .4s; }
+// hide - using only the negative length, wich allows to transition to visible, but not to hidden
+for(var i=0; i < rects.length; i++){
+  //rects[i].style.strokeWidth = 1;
+  rects[i].style.strokeDasharray = lengths[i];
+  rects[i].style.strokeDashoffset = -lengths[i];
+}
+// show ( transitioned thx to the negative len of the hiding part ) => doesn't act as expected*
+// *setting the strokeDasharray to 0 directly skips the transition :/
+for(var i=0; i < rects.length; i++){
+  rects[i].style.strokeDashoffset = 0;
+  rects[i].style.strokeDasharray = 0;
+  //rects[i].style.strokeWidth = 2; 
+}
+// wip - weirdly, also suffering from the same trouble ?! => 'll DIGG !
+for(var i=0; i < rects.length; i++){
+  rects[i].style.strokeDashoffset = 0;
+  setTimeout(function(rect){ rect.style.strokeDasharray = 0; }(rects[i]), 1000);
+  //rects[i].style.strokeWidth = 2;
+}
+// not that pretty one, but it does what's expected !
+for(var i=0; i < rects.length; i++){
+  rects[i].style.strokeDashoffset = 0;
+  //rects[i].style.strokeWidth = 2; 
+}
+setTimeout(function(){
+  for(var i=0; i < rects.length; i++){
+    rects[i].style.strokeDasharray = 0;
+  }
+}, 200);
+// prettier one, that work AS expected! :P
+for(var i=0; i < rects.length; i++){
+  rects[i].style.strokeDashoffset = 0;
+  (function(rect) {
+    setTimeout(function() { rect.style.strokeDasharray = 0; }, 300);
+  })(rects[i]);
+  //rects[i].style.strokeWidth = 2;
+}
+
+// ================= DIGGING THE "WHY DOES MY TIMEOUT ACT WEIRDLY FROM A LOOP" ===============
+// test 1: make an error knowingly
+var lols = ['tef', 'tom', 'man']
+for(var i=0; i < lols.length; i++){
+  setTimeout(function(){ console.log( lols[i] ) }, 1000);
+}
+-> undefined ;p
+// test 2: what I already know, sufficient for setTimeout's scope
+for(var i=0; i < lols.length; i++){
+  setTimeout(function(lol){ console.log( lol ) }(lols[i]), 1000);
+}
+tef
+tom
+man
+// test 3: what I learned using xhrs ( above in the current file ! :p ) - no needed, same result
+for(var i=0; i < lols.length; i++){
+  (function(i) {
+    setTimeout(function(lol){ console.log( lol ) }(lols[i]), 5000);
+  })(i);
+}
+tef
+tom
+man
+// what solves the troubles ?
+// this works ( to have everything called after the same timeout )
+for (var i = 0; i <= lols.length; i++) {
+    (function(lol) {
+        setTimeout(function() { console.log( lol ); }, 1000);
+    })(lols[i]);
+}
+// this also works ( to have each timeout executed in sequence, and not at once )
+for (var i = 1; i <= lols.length; i++) {
+    (function(index, lol) {
+        setTimeout(function() { console.log( lol ); }, i * 1000);
+    })(i, lols[i]);
+}
+
+// ================= NOW I KNOW "WHY DOES MY TIMEOUT ACTED WEIRDLY FROM A LOOP" :P ===============
+
+// onto the text/tspans, yayyyyyy !!! :D
+// what about just animating the <text> ( which may contain multiple <tspan> )'s color ?
+// na! -> what 'd happen if they chose to change stuff ? -> I want something working !
+// => so, tspan colors from/to transparent this 'll be ;D
+// the related css - nb: I had to increase the time taken by the transition, otherwise no transition for visible :/ ?!
+.js-tpl-target__schematic tspan { -webkit-transition: fill 1s; }
+// the js that comes along
+var tspans = theSchematci.querySelectorAll('tspan')
+var colors = []
+for(var i=0; i < tspans.length; i++){
+  colors[i] = tspans[i].getAttribute('fill');
+}
+// then, we can transition them visible
+for(var i=0; i < tspans.length; i++){
+  tspans[i].setAttribute('fill', colors[i]);
+}
+// or hidden
+for(var i=0; i < tspans.length; i++){
+  tspans[i].setAttribute('fill', 'transparent');
+}
