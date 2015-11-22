@@ -208,3 +208,4 @@ for(var i=0; i<outputCombo.length;i++){
 }
 // and now ? ;D
 outputCombo.join(' + ')
+//> "2x4.7kΩ" ---> YAY ^^ !
