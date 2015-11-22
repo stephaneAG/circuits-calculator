@@ -86,7 +86,8 @@ var Resistor = function(resistorValue){
 getUnityIdx = function(valueStr){
   var valueStrArr = valueStr.split('');
   for( var i=0; i<= valueStrArr.length; i++){
-    if (isNaN(parseInt(valueStrArr[i]))) {
+    //if (isNaN(parseInt(valueStrArr[i]))) {
+    if (isNaN(parseInt(valueStrArr[i])) && valueStrArr[i] !== '.' ) { // to handle stuff like '2.3k'
       idx = i;
       return idx;
       break;
