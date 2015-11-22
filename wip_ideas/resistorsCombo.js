@@ -26,6 +26,7 @@ var resistor = function(resistorValue){
   }
 }
 // LESS ROUGH CONCEPT FOR THE ABOVE FUNCTION
+/*
 var Resistor = function(resistorValue){
   if( ! isNaN(resistorValue) ){
     console.log("decimal !");
@@ -51,7 +52,35 @@ var Resistor = function(resistorValue){
   // in case we don't wanna use the 'var x = new Resistor(..)' syntax, but instead 'var x = Resistor(..)'
   return { resValue: this.resValue, resStr: this.resStr};
 }
-
+*/
+// version of the above that adds "Ohm" to the resStr variable
+var Resistor = function(resistorValue){
+  if( ! isNaN(resistorValue) ){
+    console.log("decimal !");
+    // maybe the number is within a string, let's make it ready for later / standardize that !
+    if( typeof resistorValue === "string" ) this.resValue = Number(resistorValue);
+    else this.resValue = resistorValue; 
+    //this.resStr = resistorValue.toString(); // we could also have added "Ω" at the end
+    this.resStr = resistorValue + 'Ω'; // alternative: we add "Ω" at the end ;)
+  }
+  else {
+    // get string stuff until first char: if it's Ohm, strip it, else if maj/min supported char, deduce value
+    console.log("string !");
+    // do what the above comment say, & finally just use only the unit char OR add to it the "Ω" at the end
+    // get the unity part
+    var unity = resistorValue.substr( getUnityIdx(resistorValue) );
+    // clean it up
+    if (unity.substr(-1) === "Ω" ) unity = unity.substr(0, unity.length-1);
+    // get actual value
+    //if( unity !== '') this.resValue = applyExp( Number( resistorValue.substr(0, getUnityIdx(resistorValue) ) ), unity);
+    if( unity !== '') this.resValue = applyExp2( Number( resistorValue.substr(0, getUnityIdx(resistorValue) ) ), unity);
+    else this.resValue = Number( resistorValue.substr(0, getUnityIdx(resistorValue) ) ); 
+    //this.resStr = resistorValue;
+    this.resStr = resistorValue + 'Ω'; // alternative: we add "Ω" at the end ;)
+  }
+  // in case we don't wanna use the 'var x = new Resistor(..)' syntax, but instead 'var x = Resistor(..)'
+  return { resValue: this.resValue, resStr: this.resStr};
+}
 
 // get units & value from resistor values passed as trings ( may or not contain the ending "Ohm" symbol and/or n,µ,.. )
 getUnityIdx = function(valueStr){
