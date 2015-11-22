@@ -25,6 +25,29 @@ var resistor = function(resistorValue){
     this.resStr = resistorValue;
   }
 }
+// LESS ROUGH CONCEPT FOR THE ABOVE FUNCTION
+var Resistor = function(resistorValue){
+  if( ! isNaN(resistorValue) ){
+    console.log("decimal !");
+    this.resValue = resistorValue; 
+    this.resStr = resistorValue.toString(); // we could also have added "Ω" at the end
+  }
+  else {
+    // get string stuff until first char: if it's Ohm, strip it, else if maj/min supported char, deduce value
+    console.log("string !");
+    // do what the above comment say, & finally just use only the unit char OR add to it the "Ω" at the end
+    // get the unity part
+    var unity = resistorValue.substr( getUnityIdx(resistorValue) );
+    // clean it up
+    if (unity.substr(-1) === "Ω" ) unity = unity.substr(0, unity.length-1);
+    // get actual value
+    //if( unity !== '') this.resValue = applyExp( Number( resistorValue.substr(0, getUnityIdx(resistorValue) ) ), unity);
+    if( unity !== '') this.resValue = applyExp2( Number( resistorValue.substr(0, getUnityIdx(resistorValue) ) ), unity);
+    else this.resValue = Number( resistorValue.substr(0, getUnityIdx(resistorValue) ) ); 
+    this.resStr = resistorValue;
+  }
+}
+
 
 // get units & value from resistor values passed as trings ( may or not contain the ending "Ohm" symbol and/or n,µ,.. )
 getUnityIdx = function(valueStr){
@@ -63,6 +86,17 @@ var exps = [
   ['G',  9 ],
   ['T', 12 ],
 ];
+// alternative version of the above array
+var exps2 = [
+  ['n', 1e-9 ],
+  ['µ', 1e-6 ],
+  ['m', 1e-3 ],
+  ['k',  1e3 ],
+  ['M',  1e6 ],
+  ['G',  1e9 ],
+  ['T', 1e12 ],
+];
+
 
 // get a number udpdated if the unity passed is present in the exps array, in other words, "supported"
 applyExp = function(theValue, theUnity){
@@ -72,6 +106,20 @@ applyExp = function(theValue, theUnity){
     for( var i=0; i<= exps.length; i++){
       if (exps[i][0] === theUnity) {
         return theValue * Math.pow(10, exps[i][1]); 
+        break;
+      }
+    }
+  }
+  return theValue;
+}
+// alternative version of the above function
+applyExp2 = function(theValue, theUnity){
+  if( theUnity !== ''){
+    // loop over the exps array & try to see if unity matches one of the array's[0] items
+    // if so, update the resValue using the corresponding array's[1] item
+    for( var i=0; i<= exps2.length; i++){
+      if (exps2[i][0] === theUnity) {
+        return theValue * exps2[i][1]; 
         break;
       }
     }
