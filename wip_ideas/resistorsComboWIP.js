@@ -99,3 +99,27 @@ resistors.forEach(function(resistorVal){ resistorsStack.push( Resistor(resistorV
 
 // quick debug ?
 resistorsStack.forEach(function(resistorObj){ console.log( resistorObj.resStr + ' ==> ' + resistorObj.resValue) });
+
+// quickie to debug my idea for deducing combos ( .. )
+// to hold our goal value ( in goalResistance.resValue )
+var goalResistance = Resistor("16k");
+// to hold our sources
+var source = [];
+//resistorsStack.forEach(function(resistorObj){ source.push( resistorObj.resValue ); });
+
+resistorsStack.forEach(function(resistorObj){
+  if( resistorObj.resValue <= goalResistance.resValue ) source.push( resistorObj.resValue );
+});
+
+// don't mind the following & check the above ;p
+// discard any source that's bigger than the goal value
+// ( we can either splice() values ot of source, or push some of them to a new array )
+//var goodSrc = [];
+
+// R!: to 'sort' numerical stuff from tiniest to biggest:
+// source.sort( function(a, b){return a-b} );
+// & to 'sort' numerical stuff from biggest to tiniest: ( instead of doing sort(..).reverse() )
+// source.sort( function(a, b){return b-a} );
+
+// sorte the source resistor values from biggest to tiniest
+source.sort( function(a, b){return b-a} );
