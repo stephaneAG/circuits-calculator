@@ -121,8 +121,8 @@ resistorsStack.forEach(function(resistorObj){
 // & to 'sort' numerical stuff from biggest to tiniest: ( instead of doing sort(..).reverse() )
 // source.sort( function(a, b){return b-a} );
 
-// sorte the source resistor values from biggest to tiniest
-source.sort( function(a, b){return b-a} );
+// sorte the source resistor values from biggest to tiniest - currently not used as is ;p
+//source.sort( function(a, b){return b-a} );
 
 // debug
 for(var i=0; i<source.length;i++){
@@ -132,3 +132,50 @@ for(var i=0; i<source.length;i++){
   //console.log('remaining stuff when subtracting: ' + isLeft);
   console.log('%c' + source[i] + '  ->  TIMES: ' + nIn + '  =>  REMAINS: ' + isLeft, 'color: #0037BE;')
 }
+
+
+/* WIP combos calculations .. */
+
+// not my code, but working
+function get_combinations(val)
+{
+    var result = [];
+
+    while (val >= source[0])
+    {
+        for (var i = source.length - 1; i >= 0; i--)
+        {
+            if (source[i] <= val)
+            {
+                val = val - source[i];
+                result.push(source[i]);
+                break;
+            }
+        }
+    }
+  
+    return result;
+}
+// to use:
+get_combinations(Resistor("9.4k").resValue )
+//> [4700, 4700]
+
+// to properly format the output 
+//( unities are to be added, depending on the desired/specified output unity )
+// also, going further away from the above example implm, we could still have the str<->val relationship we had ( .. )
+var stdCombo = get_combinations(Resistor("9.4k").resValue )
+var counts = {};
+var outputCombo = [];
+for(var i = 0; i< stdCombo.length; i++) {
+    var num = stdCombo[i];
+    counts[num] = counts[num] ? counts[num]+1 : 1;
+}
+var resistorsByQtty = keys(counts)
+resistorsByQtty.forEach(function(elem){
+  console.log(elem + ' x ' + counts[elem]);
+  outputCombo.push( counts[elem] + 'x' + elem );
+});
+// to get a grasp on what it 'd look like with multiple resistor values
+//outputCombo.push( '1x250' )
+outputCombo.join(' + ')
+//> "2x4700 + 1x250"
