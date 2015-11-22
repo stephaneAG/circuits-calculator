@@ -87,7 +87,36 @@ if( unity !== '') var actualValue = applyExp( Number( valueStr.substr(0, getUnit
 else var actualValue = Number( valueStr.substr(0, getUnityIdx(valueStr) ) );
 
 // array holding all the values of all the resistors I own ( mostly mainly available resistor values )
-resistors = [];
+resistors = [
+  /* Ω - Ohm */
+  47,
+  68,
+  150,
+  200,
+  270,
+  330,
+  470,
+  510,
+  560,
+  /* kΩ - KiloOhm */
+  '1k',
+  '1.5k',
+  '2.2k',
+  '3.9k',
+  '4.7k',
+  '10k',
+  '22k',
+  '27k',
+  '36k',
+  '47k',
+  '100k',
+  '200k',
+  '330k',
+  /* MΩ - MegaOhm */
+  '1M',
+  '20M',
+  '1100M',
+];
 
 // array holding all the resistor Objects gotten from the above reistor array's values
 // 'll be used to deduce the possible configs when providing the tool a request ( aka, get the optimal combo for ( .. ) )
