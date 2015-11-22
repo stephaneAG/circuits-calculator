@@ -123,3 +123,12 @@ resistorsStack.forEach(function(resistorObj){
 
 // sorte the source resistor values from biggest to tiniest
 source.sort( function(a, b){return b-a} );
+
+// debug
+for(var i=0; i<source.length;i++){
+  var nIn = Math.floor(goalResistance.resValue/source[i]);
+  //console.log('elem i: ' + source[i] + ' appears ' + nIn + ' times entirely in val: ' + goalResistance.resValue);
+  var isLeft = goalResistance.resValue - ( source[i] * nIn );
+  //console.log('remaining stuff when subtracting: ' + isLeft);
+  console.log('%c' + source[i] + '  ->  TIMES: ' + nIn + '  =>  REMAINS: ' + isLeft, 'color: #0037BE;')
+}
