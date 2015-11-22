@@ -92,3 +92,39 @@ resistors = [];
 // array holding all the resistor Objects gotten from the above reistor array's values
 // 'll be used to deduce the possible configs when providing the tool a request ( aka, get the optimal combo for ( .. ) )
 resistorsStack = [];
+
+
+
+
+
+
+
+
+/* == R: NOT MY CODE !!! == 
+ the following is the best I could find to study a possible [ yet not exactly to my likings ..] implm
+ of the knapsack-like problematic I'm facing ..
+ for the record, I have 2 solutions-that-won't-be-working-I-guess on my own ^^
+*/
+var source = [0., 2.5, 3.5, 4.7];
+function get_combinations(val)
+{
+    var result = [];
+
+    while (val >= source[0])
+    {
+        for (var i = source.length - 1; i >= 0; i--)
+        {
+            if (source[i] <= val)
+            {
+                val = val - source[i];
+                result.push(source[i]);
+                break;
+            }
+        }
+    }
+  
+    return result;
+}
+console.log( get_combinations(7).join(' + ') );
+
+
