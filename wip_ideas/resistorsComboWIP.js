@@ -136,7 +136,17 @@ for(var i=0; i<source.length;i++){
 
 /* WIP combos calculations .. */
 
-// not my code, but working
+// not my code, but ~working
+/*
+ why ~working ?
+ simple example:
+ var source = [2.5,3.5, 4.7]
+ //> [2.5, 3.5, 4.7]
+ get_combinations(9.4)
+ //> [4.7, 4.7] --> ok, indeed logical
+ get_combinations(7)
+ //> [4.7] -------> wtf-is-my '[3.5, 3.5]' ? => NOT logical ?!
+*/
 function get_combinations(val)
 {
     var result = [];
