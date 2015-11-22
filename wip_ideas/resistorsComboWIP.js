@@ -189,3 +189,21 @@ resistorsByQtty.forEach(function(elem){
 //outputCombo.push( '1x250' )
 outputCombo.join(' + ')
 //> "2x4700 + 1x250"
+
+// quickie to checkout how this 'd look like
+// 'll be useful anyway if didn't use the resistorsStack in the 1st place ..
+// quick helper
+function resStrFromVal(resVal){
+  for( var i=0; i<resistorsStack.length; i++){
+    if( resistorsStack.resValue === resVal ) return resistorsStack.resStr;
+  }
+}
+// replace val in our <qtty>x<val> by resStr ( ex '10000' -> '10kΩ')
+outputCombo.forEach(function(elemWithQtty){
+  // get part after 'x'
+  var resVal = elemWithQtty.substr(elemWithQtty.indexOf('x')+1 );
+  // replace it by it's corresponding resStr
+  elemWithQtty = elemWithQtty.substr(0, elemWithQtty.indexOf('x')+1 ) + resStrFromVal(resVal);
+});
+// and now ? ;D
+outputCombo.join(' + ')
