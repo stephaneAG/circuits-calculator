@@ -195,15 +195,16 @@ outputCombo.join(' + ')
 // quick helper
 function resStrFromVal(resVal){
   for( var i=0; i<resistorsStack.length; i++){
-    if( resistorsStack.resValue === resVal ) return resistorsStack.resStr;
+    if( resistorsStack[i].resValue === resVal ) return resistorsStack[i].resStr;
   }
+  return resVal+'Ω'; //TODO: format it with the default/specified unity 
 }
 // replace val in our <qtty>x<val> by resStr ( ex '10000' -> '10kΩ')
-outputCombo.forEach(function(elemWithQtty){
+for(var i=0; i<outputCombo.length;i++){
   // get part after 'x'
-  var resVal = elemWithQtty.substr(elemWithQtty.indexOf('x')+1 );
+  var resVal = Number( outputCombo[i].substr(outputCombo[i].indexOf('x')+1 ) );
   // replace it by it's corresponding resStr
-  elemWithQtty = elemWithQtty.substr(0, elemWithQtty.indexOf('x')+1 ) + resStrFromVal(resVal);
-});
+  outputCombo[i] = outputCombo[i].substr(0, outputCombo[i].indexOf('x')+1 ) + resStrFromVal(resVal);
+}
 // and now ? ;D
 outputCombo.join(' + ')
