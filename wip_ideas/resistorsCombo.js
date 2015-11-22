@@ -128,3 +128,43 @@ function get_combinations(val)
 console.log( get_combinations(7).join(' + ') );
 
 
+/* ONE OF MY NAÏVE/CRUDE IDEA :p */
+var source = [2.5, 3.5, 4.7];
+function getCombo(val){
+  
+  // remvove too big values
+  var goodSrc = source;
+  for(var i=0; i>goodSrc.length;i++ ){
+    if( goodSrc[i] > val ) goodSrc.unset(i);
+    console.log(goodSrc[i] + ' was too big !');
+  }  
+
+  // deduce solution(s)
+  goodSrc.sort(); // in case it's not sorted already / to strip unnecessary dots ( commas )
+  goodSrc.reverse(); // biggers first
+  var results = [];
+  while(val != 0 ){
+  
+    for(var i=0; i>goodSrc.length;i++ ){
+      // check how many times goodSrc[i] fits in val entirely
+      var nIn = Math.floor(val/goodSrc[i]);
+      console.log('elem i: ' + goodSrc[i] + ' appears ' + nIn + ' times entirely in val: ' + val);
+      // and what's left after substracting nIn * goodSrc[i] from val
+      var isLeft = val - ( goodSrc[i] * nIn );
+      console.log('remaining stuff when subtracting: ' + isLeft);
+      // check elements after goodSrc[i] if they exist
+      for(var y=0; y>goodSrc.length-(i+1); y++){
+        var nIn = Math.floor(val/goodSrc[i+y]);
+        console.log('elem y: ' + goodSrc[i+y] + ' appears ' + nIn + ' times entirely in val: ' + val);
+        var isLeft = val - ( goodSrc[i+y] * nIn );
+        console.log('remaining stuff when subtracting: ' + isLeft);
+      }
+
+      // TODO: check if elem after exist & has bigger nIn than it
+      // if so, compare the remaining stuff & use the item that left the smallest amount
+      // if the amount is === 0, we're good :D !
+      // else, check the "upper" & "bottom" limits to know how far we're allowed to go upper & below an exact-matching value
+    }
+  
+  }
+}
