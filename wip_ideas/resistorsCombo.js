@@ -29,7 +29,9 @@ var resistor = function(resistorValue){
 var Resistor = function(resistorValue){
   if( ! isNaN(resistorValue) ){
     console.log("decimal !");
-    this.resValue = resistorValue; 
+    // maybe the number is within a string, let's make it ready for later / standardize that !
+    if( typeof resistorValue === "string" ) this.resValue = Number(resistorValue);
+    else this.resValue = resistorValue; 
     this.resStr = resistorValue.toString(); // we could also have added "Ω" at the end
   }
   else {
@@ -46,6 +48,8 @@ var Resistor = function(resistorValue){
     else this.resValue = Number( resistorValue.substr(0, getUnityIdx(resistorValue) ) ); 
     this.resStr = resistorValue;
   }
+  // in case we don't wanna use the 'var x = new Resistor(..)' syntax, but instead 'var x = Resistor(..)'
+  return { resValue: this.resValue, resStr: this.resStr};
 }
 
 
