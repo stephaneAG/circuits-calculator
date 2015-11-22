@@ -197,7 +197,7 @@ function resStrFromVal(resVal){
   for( var i=0; i<resistorsStack.length; i++){
     if( resistorsStack[i].resValue === resVal ) return resistorsStack[i].resStr;
   }
-  return resVal+'Ω'; //TODO: format it with the default/specified unity 
+  return resVal+'Ω'; //TODO: format it with the default/specified unity
 }
 // replace val in our <qtty>x<val> by resStr ( ex '10000' -> '10kΩ')
 for(var i=0; i<outputCombo.length;i++){
@@ -209,3 +209,36 @@ for(var i=0; i<outputCombo.length;i++){
 // and now ? ;D
 outputCombo.join(' + ')
 //> "2x4.7kΩ" ---> YAY ^^ !
+
+// to get the sum of our outputCombo ( which may not be an exact match )
+// for ES6
+var outputComboSum = stdCombo.reduce( (a, b) => a + b );
+// else
+var outputComboSum = stdCombo.reduce( function(a, b){ return a + b}, 0);
+//> 9400
+
+// now, format it with the default/specified unity ^^ !
+// nb: we could also add a handy 'convert(resVal, desiredUnity)' function ;p
+
+// quick & naïve/crude handling of the above - aka format in unity that's most handy/representative
+if(outputComboSum > 1){
+  var numLen = outputComboSum.toString().length;
+  // put bigger values above this one ;p ( in other words, 'StatOhm, anyone ?' )
+  if(numLen > 12) { console.log('Ωs to TΩs !'); outputComboSum = outputComboSum*1e-12+'TΩ'; }
+  else if(numLen > 9) { console.log('Ωs to GΩs !'); outputComboSum = outputComboSum*1e-9+'GΩ'; }
+  else if(numLen > 6) { console.log('Ωs to MΩs !'); outputComboSum = outputComboSum*1e-6+'MΩ'; }
+  else if(numLen > 3) { console.log('Ωs to kΩs !'); outputComboSum = outputComboSum*1e-3+'kΩ'; }
+  else { console.log('Ωs stays Ωs ;p'); outputComboSum = outputComboSum+'Ω'; }
+} else if (outputComboSum < 1){ // µΩ, anyone ? TODO: adjust the below part, see below comment ( .. )
+  // R: the -2 takes in account the prefixing '0.' that gets added even when entering '.005'
+  var numLen = outputComboSum.toString().length-2;
+  if(numLen > 9) { console.log('Ωs to nΩs !'); outputComboSum = outputComboSum*1e9+'nΩ'; }
+  else if(numLen > 6) { console.log('Ωs to µΩs !'); outputComboSum = outputComboSum*1e6+'µΩ'; }
+  else if(numLen > 3) { console.log('Ωs to mΩs !'); outputComboSum = outputComboSum*1e3+'mΩ'; }
+  else { console.log('Ωs stays Ωs ;p'); outputComboSum = outputComboSum+'Ω'; }
+}
+//> "9.4kΩ" ---> NEAT ! ;P
+/*
+when trying different values, either I'm really,reaalllly tired, or it's not that handy that way for values
+that are < 1
+*/
