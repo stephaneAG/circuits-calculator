@@ -479,3 +479,17 @@ if(outputComboSum > 1){
 when trying different values, either I'm really,reaalllly tired, or it's not that handy that way for values
 that are < 1
 */
+
+/* TODO ANDTONOTFORGET /!\ 
+
+ - convert(resValOrStr, unity[, type]) // 'd return the value, converted in the desired unity[, as suffixed resStr ]
+   resValOrStr: either a Number ( value implicitely in Ω) or String containing a Number ( no unity )
+                    or a String, with unity, and optional "Ω" -> we'd get the value using stg like 'Resistor(resStr).resVal'
+   unity: the unit in which to convert the passed value
+   type: optional, whether or not the returned value is a Number, a Str [ suffixed by the unit ] or a Resistor object
+   
+   inner working: get/clean/parse stuff, convert depending on unit passed ( using 'exps2' ), then return [ as suffiex str ]
+   TODO: add a '.in(unit)' 'member' function to our Resistor, then generate '.in_k' & Cie the same way I did for $_div
+         it'd be neat & also reduce considerably the usage of the above ;P
+
+*/
