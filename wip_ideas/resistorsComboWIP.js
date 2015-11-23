@@ -102,7 +102,8 @@ resistorsStack.forEach(function(resistorObj){ console.log( resistorObj.resStr + 
 
 // quickie to debug my idea for deducing combos ( .. )
 // to hold our goal value ( in goalResistance.resValue )
-var goalResistance = Resistor("16k");
+//var goalResistance = Resistor("16k");
+var goalResistance = Resistor("1100M"); // it's always nicer with big-arra(ys|nx) ;)
 // to hold our sources
 var source = [];
 //resistorsStack.forEach(function(resistorObj){ source.push( resistorObj.resValue ); });
@@ -203,6 +204,30 @@ function get_combinationsWip(val){
 }
 
 /* wip version 2 of the above - freshly extracted from your servitor's brain cells ^^ */
+/*
+ working as I expect ?
+ === simple example ( same as the one ran against 'get_combinations()' ) ===
+ var source = [2.5,3.5, 4.7]
+ //> [2.5, 3.5, 4.7]
+ get_combinationsWip2(9.4)
+ //> [4.7, 4.7] --> ok, indeed logical
+ get_combinationsWip2(7)
+ //> [3.5, 3.5] ------->  PWND :P !!
+ 
+ === additional tests ( using the std resistorsStack ) ===
+ get_combinationsWip2(Resistor("2k").resValue )
+ //> [1000, 1000]
+ get_combinationsWip2(Resistor("3k").resValue )
+ //> [1500, 1500]
+ get_combinationsWip2(Resistor("4.4k").resValue )
+ [2200, 2200]
+ get_combinationsWip2(Resistor("7.8k").resValue )
+ [3900, 3900]
+ 
+ === BUT, we need a littl' fix' for what we "broke" ===
+ get_combinationsWip2(Resistor("22k").resValue )
+ 
+*/
 function get_combinationsWip2(val){
     var result = [];
 
@@ -222,6 +247,61 @@ function get_combinationsWip2(val){
                   // WIP ADD: CHECK WHICH ITEM IS PRESENT X TIMES MORE THAN THE OTHER
                   // R: we could also [ / next step ? ] look for the smallest remaining value as well
                   if( nxtIn > nIn ){ // there's more [i-1]'s in val than there's [i]'s
+                    // add the value n times to the result combo, & subtract it from val same number of times
+                    for(var y=0; y < nxtIn; y++){
+                      val = val - source[i-1];
+                      result.push(source[i-1]);
+                    }
+                    break;
+                  }
+                }
+                // if we have one or more times source[i] in current/remaining val, we handle things closely as before
+                // R: we do NOT check yet the remaining stuff if we were to subtract source[i] from val n times ( later fcn vers )
+                //if ( nIn ){
+                // add the value n times to the result combo, & subtract it from val same number of times
+                for(var y=0; y < nIn; y++){
+                  val = val - source[i];
+                  result.push(source[i]);
+                }
+                break;
+                //}
+                //val = val - source[i];
+                //result.push(source[i]);
+                //break;
+            }
+        }
+    }
+  
+    return result;
+}
+
+/* wip version 3 of the above, that fixes the "exist as entire resistor value prevented" side-effect  */
+function get_combinationsWip3(val){
+    var result = [];
+
+    while (val >= source[0]){
+
+        for (var i = source.length - 1; i >= 0; i--){
+            //console.log('val: ' + val + ' i: ' + i + '  -->  ' + source[i]);
+            if (source[i] <= val){
+                //console.log(source[i] + ' <= ' + val);
+                var nIn = Math.floor(val/source[i]); // R: we could add "upper limit" to val [ & a or ? ] here
+                console.log('REMAINS: ' + val);
+                console.log('[i] ' + source[i] + ' fits ' + nIn + ' times in ' + val);
+                // WIP ADD: CHECK NEXT ITEM STUFF IT THERE'S ONE
+                if( i-1 >= 0 ){ // there are still items after ( actually, previous to ) this one in the array
+                  var nxtIn = Math.floor(val/source[i-1]); // R: we could add "upper limit" to val [ & a or ? ] here
+                  console.log('[i-1] ' + source[i-1] + ' fits ' + nxtIn + ' times in ' + val);
+                  // WIP ADD: CHECK WHICH ITEM IS PRESENT X TIMES MORE THAN THE OTHER
+                  // ~~R: we could also~~ we have to [ / next step ? ] look for the smallest remaining value as well
+                  // else, we'd prevent "entire resistor values" to be accepted ( as it they appear one time / equals 'val')
+                  // SO:
+                  // if there's more [i-1]'s in val than there's [i]'s
+                  // & either:
+                  // if ( !source[i] === val ) // or if ( source[i] !== val )
+                  // if ( val - nxtIn * source[i-1] < val - nIn * source[i] )
+                  //if( nxtIn > nIn ){ // /!\ prevents entire resistor values to be matched against
+                  if( nxtIn > nIn && val - nxtIn * source[i-1] < val - nIn * source[i] ){
                     // add the value n times to the result combo, & subtract it from val same number of times
                     for(var y=0; y < nxtIn; y++){
                       val = val - source[i-1];
