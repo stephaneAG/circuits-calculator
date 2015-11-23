@@ -1,3 +1,21 @@
+/*
+
+In clean english, the following is a personal try to "combinatorial optimization".
+It seems to be close to what some call a "Knapsack" / "Coin" problem(s).
+
+Formulated the best I can, my need is defined by the following(s)
+
+- generate a combination where there's a minimal difference between the sum of all available
+  resistor values, any number of times, and the goal number.
+
+additional constraint(s):
+1 - while keeping a total number of resistor values less or equal to a specific number
+
+2 - while keeping (a) particular resistor(s)'(s) value usage less or equal to (a) number(s)
+
+*/
+
+
 var Resistor = function(resistorValue){
   if( ! isNaN(resistorValue) ){
     console.log("decimal !");
