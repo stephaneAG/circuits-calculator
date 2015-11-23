@@ -220,13 +220,13 @@ function get_combinationsWip(val){
  get_combinationsWip2(Resistor("3k").resValue )
  //> [1500, 1500]
  get_combinationsWip2(Resistor("4.4k").resValue )
- [2200, 2200]
+ //> [2200, 2200]
  get_combinationsWip2(Resistor("7.8k").resValue )
- [3900, 3900]
+ //> [3900, 3900]
  
  === BUT, we need a littl' fix' for what we "broke" ===
  get_combinationsWip2(Resistor("22k").resValue )
- 
+ //> [10000, 10000, 1000, 1000]
 */
 function get_combinationsWip2(val){
     var result = [];
@@ -276,6 +276,64 @@ function get_combinationsWip2(val){
 }
 
 /* wip version 3 of the above, that fixes the "exist as entire resistor value prevented" side-effect  */
+/*
+ ( .. )
+ 
+ === additional tests ( using the std resistorsStack ) ===
+ ( .. )
+ // R: 1st version
+ get_combinationsWip(Resistor("7.8k").resValue );
+ //> [4700, 2200, 1000]
+ // R: this version ( & the v2 )
+ get_combinationsWip3(Resistor("7.8k").resValue )
+ //> [3900, 3900]
+ 
+ // a nice side effect ( which is actually not one, so let's say "the turn it takes" ):
+ // while not written in a recursive manner, there's the added benefit of handling [i] & [i-1]
+ // this is better seen in the debug logs, as follows
+ get_combinationsWip3(Resistor("7.9k").resValue );
+ REMAINS: 7900
+ [i] 4700 fits 1 times in 7900
+ [i-1] 3900 fits 2 times in 7900
+ REMAINS: 100
+ [i] 68 fits 1 times in 100
+ [i-1] 47 fits 2 times in 100
+ //> [3900, 3900, 47, 47]
+ // note the difference between the above and the log of the following
+ get_combinationsWip(Resistor("7.9k").resValue );
+ //> [4700, 2200, 1000]
+ // hence, as seen with the 7.8k example, both manners are complementary
+ 
+ === interesting thoughts ! ===
+ // to have an "upper limit" additional combination generated,
+ // we'd just have to use the fcn with the original val + the upper limit threshold
+ // to get either/both 'get_combinationsWip3' |/ get_combinationsWip combination(s)
+ // the "bottom limit" is by essence, as it depends on the values present in the stack*
+ //
+ // *who said "let's write a tool to deduce dimensions/material for a particular resistance" ? ;)
+ //
+ // the ability to pass/specify a max usage of specific resistor values 'd be handy,
+ // to be able to quickly deduce available combinations using of the shelf parts
+ //
+ // by default, the tool aim to use the minimum number of resistors
+ // if we choose to do so, we can also opt for smallest amount of different resistor values
+ //
+ // if we were to allow being passed a maximum number of resistors,
+ // displaying the remaining value, if any, should be mandatory
+ //
+ // add a 'type' prop to Resistor obj, & accept '4bands' & '5bands' as values
+ // these could be used to deduce the color scheme & be used in a graph/chart,
+ // or in an interactive SVG ( ex: "Adafruit Playground > Resistor Codes")
+ //
+ // talking about "Adafruit Playground", check the 'Multiple Resistors' calculator:
+ // when in the 'in series' tab, it's nearly the exact opposite of my tool** ;P
+ // **as it combines resistors values together from a set & returns the overall resistance, 
+ //   while we produce return a combination of resistors of a set from an overall resistance ;p 
+ 
+ === .. the "boulevard of broken dreams" is fixe .. ===
+ get_combinationsWip3(Resistor("22k").resValue )
+ //> [22000]
+*/
 function get_combinationsWip3(val){
     var result = [];
 
