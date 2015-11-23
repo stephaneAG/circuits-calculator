@@ -170,6 +170,40 @@ function get_combinations(val)
 get_combinations(Resistor("9.4k").resValue )
 //> [4700, 4700]
 
+/* alternative, wip version of the above - written by your servitor this time ;p */
+function get_combinationsWip(val){
+    var result = [];
+
+    while (val >= source[0]){
+
+        for (var i = source.length - 1; i >= 0; i--){
+            //console.log('val: ' + val + ' i: ' + i + '  -->  ' + source[i]);
+            if (source[i] <= val){
+                //console.log(source[i] + ' <= ' + val);
+                var nIn = Math.floor(val/source[i]); // R: we could add "upper limit" to val [ & a or ? ] here
+                console.log('REMAINS: ' + val);
+                console.log(source[i] + ' fits ' + nIn + ' times in ' + val);
+                // if we have one or more times source[i] in current/remaining val
+                // R: we do NOT check yet the remaining stuff if we were to subtract source[i] from val n times ( later fcn vers )
+                if ( nIn ){
+                  for(var y=0; y < nIn; y++){ // add the value n times to the result combo, & subtract it from val same number of times
+                    val = val - source[i];
+                    result.push(source[i]);
+                  }
+                  break;
+                }
+                //val = val - source[i];
+                //result.push(source[i]);
+                //break;
+            }
+        }
+    }
+  
+    return result;
+}
+
+
+
 // to properly format the output 
 //( unities are to be added, depending on the desired/specified output unity )
 // also, going further away from the above example implm, we could still have the str<->val relationship we had ( .. )
