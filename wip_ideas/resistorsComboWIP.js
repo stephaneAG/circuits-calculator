@@ -493,3 +493,36 @@ that are < 1
          it'd be neat & also reduce considerably the usage of the above ;P
 
 */
+
+/* wip convert */
+function convert(resValOrStr, unit, type){
+
+  // check whether we're passed a str or a value
+  var value;
+  if( ! isNaN(resValOrStr) ){
+    if( typeof resValOrStr === "string" ) value = Number(resValOrStr);
+    else value = resValOrStr;
+  }
+  else {
+    var unity = resValOrStr.substr( getUnityIdx(resValOrStr) );
+    if (unity.substr(-1) === "Ω" ) unity = unity.substr(0, unity.length-1);
+    if( unity !== '') value = applyExp2( Number( resValOrStr.substr(0, getUnityIdx(resValOrStr) ) ), unity);
+    else value = Number( resValOrStr.substr(0, getUnityIdx(resValOrStr) ) ); 
+  }
+
+  // clean & check what is the desired output unit, & convert value
+  if (unit.substr(-1) === "Ω" ) unit = unit.substr(0, unit.length-1);
+  var outVal = applyExp2( value, unit);
+
+  // check what we have to return
+  if( !typeof type === 'undefined' ){
+    if( type === 'str') outVal += '';
+    else if( type === 'unit') outVal += unit;
+    else if( type === 'unity') outVal += unit + 'Ω';
+    else if( type === 'resistor') outVal = Resistor(outVal);
+  }
+ 
+  // return stuff
+  return outVal; 
+  
+}
