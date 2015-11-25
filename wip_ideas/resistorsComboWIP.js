@@ -552,12 +552,15 @@ exps2.forEach(function(mapItem){
 })
 // alternative to the above that allows choosing the form of what's returned
 exps2.forEach(function(mapItem){
-  console.log('unitySymbol: ' + mapItem[0] + ' unityValue: ' + mapItem[1])
+  //console.log('unitySymbol: ' + mapItem[0] + ' unityValue: ' + mapItem[1])
   ResistorProto.prototype['_in' + mapItem[0]] = function(type){
-    //var outVal = applyExp2( value, unit);
-    var outVal = this.resValue * mapItem[1];
+    //var outVal = applyExp2( value, unit); // old
+    //var outVal = this.resValue * mapItem[1]; // good ?
+    var outVal = applyExp2( this.resValue, mapItem[0]);
+    
     // check what we have to return
-    if( !typeof type === 'undefined' ){
+    //console.log( 'FORM OF RETURN: ' + type );
+    if( typeof type !== 'undefined' ){
       if( type === 'str') outVal += '';
       else if( type === 'unit') outVal += mapItem[0];
       else if( type === 'unity') outVal += mapItem[0] + 'Ω';
