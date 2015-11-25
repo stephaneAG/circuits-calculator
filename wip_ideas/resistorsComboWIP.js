@@ -526,3 +526,45 @@ function convert(resValOrStr, unit, type){
   return outVal; 
   
 }
+
+
+/* add a '.in(unit)' 'member' function to our Resistor, then generate '.in_k' & Cie the same way I did for $_div */
+// create a 'subobj' to be able to add methods to its prototype later dynamically while still keeping our Resistor +/- same
+function ResistorProto(resValue, resStr){
+  this.resValue = resValue;
+  this.resStr = resStr;
+}
+// debug fcn
+ResistorProto.prototype.sayHello = function(){ console.log('Hello there: ' + this.resValue) }
+// modif(s) on the 'Resistor'
+function MyResistor(resistorVal, resistorStr){
+  // instead of return { this.resVal, this.resStr }, we do the following
+  return new ResistorProto(resistorVal, resistorStr)
+}
+var def = MyResistor(400, 'hello world')
+// generate & add the necessary functions dynamically to our prototype
+exps2.forEach(function(mapItem){
+  console.log('unitySymbol: ' + mapItem[0] + ' unityValue: ' + mapItem[1])
+  ResistorProto.prototype['_in' + mapItem[0]] = function(){
+    return this.resValue * mapItem[1];
+    //console.log('resVal: ' + this.resValue + ' mapItem[0]: ' + mapItem[0] + ' mapItem[1]: ' + mapItem[1] )
+  };
+})
+// alternative to the above that allows choosing the form of what's returned
+exps2.forEach(function(mapItem){
+  console.log('unitySymbol: ' + mapItem[0] + ' unityValue: ' + mapItem[1])
+  ResistorProto.prototype['_in' + mapItem[0]] = function(type){
+    //var outVal = applyExp2( value, unit);
+    var outVal = this.resValue * mapItem[1];
+    // check what we have to return
+    if( !typeof type === 'undefined' ){
+      if( type === 'str') outVal += '';
+      else if( type === 'unit') outVal += mapItem[0];
+      else if( type === 'unity') outVal += mapItem[0] + 'Ω';
+    }
+  
+    //return this.resValue * mapItem[1];
+    return outVal;
+    //console.log('resVal: ' + this.resValue + ' mapItem[0]: ' + mapItem[0] + ' mapItem[1]: ' + mapItem[1] )
+  };
+})
