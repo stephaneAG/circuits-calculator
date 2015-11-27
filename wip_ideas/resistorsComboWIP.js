@@ -639,3 +639,114 @@ myResistor.generateBands = function(bands){
     // ====
   }
 }
+
+
+/* expected debug output for single digits ;p */
+myResistor.resValue = 1 // for quick debug testing
+myResistor.generateBands(4)
+//> res value is above 1 Ohm: 1
+//> [1, 0, 0.1, "t"]
+myResistor.generateBands(5)
+//> res value is above 1 Ohm: 1
+//> [1, 0, 0, 0.01, "t"]
+
+
+/* simplier debug rewrite - I'm tired ;p */
+myResistor.generateBands2 = function(bands){
+  // TODO: handle values above 1 only for the moment ( aka no m,µ,n by now)
+  if(this.value < 1){
+    console.log('m,µ,n not handled by now ! ')
+  } else {
+    console.log('res value is above 1 Ohm: ' + this.resValue)
+    
+    // ====
+    var colorCodesArr = [];
+    
+    if( ! this.resValue > 10){ // if we only have one digit
+      // == 4 bands ==
+      if( bands === 4 ){
+        colorCodesArr.push ( this.resValue ); // value in 1st, to apply to convention
+        colorCodesArr.push ( 0 );             // added 0, same as above
+        colorCodesArr.push ( 0.1 );           // adjusted multiplier to comply with the above(s) - 4 band version
+        colorCodesArr.push ( 't' );           // dummy placeholder for tolerance
+        return colorCodesArr;
+      }
+      // == 5 bands ==
+      else {
+        colorCodesArr.push ( this.resValue ); // value in 1st, to apply to convention
+        colorCodesArr.push ( 0 );             // added 0, same as above
+        colorCodesArr.push ( 0 );             // added 0, same as above
+        colorCodesArr.push ( 0.01 );           // adjusted multiplier to comply with the above(s) - 5 band version
+        colorCodesArr.push ( 't' );           // dummy placeholder for tolerance
+        return colorCodesArr;
+      }  
+      
+    }
+    
+    else if( ! this.resValue > 100){ // if we have two digit
+      // == 4 bands ==
+      if( bands === 4 ){
+        colorCodesArr.push ( (''+this.resValue)[0] ); // 1st digit
+        colorCodesArr.push ( (''+this.resValue)[1] ); // 2nd digit
+        colorCodesArr.push ( 1 );                     // adjusted multiplier - 4 band version
+        colorCodesArr.push ( 't' );                   // dummy placeholder for tolerance
+        return colorCodesArr;
+      }
+      // == 5 bands ==
+      else {
+        colorCodesArr.push ( (''+this.resValue)[0] ); // 1st digit
+        colorCodesArr.push ( (''+this.resValue)[1] ); // 2nd digit
+        colorCodesArr.push ( 0 );                     // added 0, to apply to convention
+        colorCodesArr.push ( 0.1 );                   // adjusted multiplier to comply with the above(s) - 5 band version
+        colorCodesArr.push ( 't' );                   // dummy placeholder for tolerance
+        return colorCodesArr;
+      }  
+      
+    }
+    
+    
+    else if( ! this.resValue > 1000){ // if we have three digit
+      // == 4 bands ==
+      if( bands === 4 ){
+        colorCodesArr.push ( (''+this.resValue)[0] ); // 1st digit
+        colorCodesArr.push ( (''+this.resValue)[1] ); // 2nd digit
+        colorCodesArr.push ( 10 );                     // adjusted multiplier ( third digit is discarded ) - 4 band version
+        colorCodesArr.push ( 't' );                   // dummy placeholder for tolerance
+        return colorCodesArr;
+      }
+      // == 5 bands ==
+      else {
+        colorCodesArr.push ( (''+this.resValue)[0] ); // 1st digit
+        colorCodesArr.push ( (''+this.resValue)[1] ); // 2nd digit
+        colorCodesArr.push ( (''+this.resValue)[2] ); // 3rd digit
+        colorCodesArr.push ( 1 );                     // adjusted multiplier - 5 band version
+        colorCodesArr.push ( 't' );                   // dummy placeholder for tolerance
+        return colorCodesArr;
+      }  
+      
+    }
+    
+    else { // if we have more than three digit
+      // == 4 bands ==
+      if( bands === 4 ){
+        colorCodesArr.push ( (''+this.resValue)[0] ); // 1st digit
+        colorCodesArr.push ( (''+this.resValue)[1] ); // 2nd digit
+        colorCodesArr.push ( 10 );                     // adjusted multiplier ( third digit is discarded ) - 4 band version
+        colorCodesArr.push ( 't' );                   // dummy placeholder for tolerance
+        return colorCodesArr;
+      }
+      // == 5 bands ==
+      else {
+        colorCodesArr.push ( (''+this.resValue)[0] ); // 1st digit
+        colorCodesArr.push ( (''+this.resValue)[1] ); // 2nd digit
+        colorCodesArr.push ( (''+this.resValue)[2] ); // 3rd digit
+        colorCodesArr.push ( 1 );                     // adjusted multiplier - 5 band version
+        colorCodesArr.push ( 't' );                   // dummy placeholder for tolerance
+        return colorCodesArr;
+      }  
+      
+    }
+    
+    // ====
+  }
+}
