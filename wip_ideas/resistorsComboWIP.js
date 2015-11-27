@@ -571,3 +571,71 @@ exps2.forEach(function(mapItem){
     //console.log('resVal: ' + this.resValue + ' mapItem[0]: ' + mapItem[0] + ' mapItem[1]: ' + mapItem[1] )
   };
 })
+
+
+
+
+
+
+/* wip code for later SVG handling/generation */
+/*
+  order of TODO's:
+  
+  - Resistor.generateBands(bands) - pass it 4 or 5 to get an array of resistor color codes
+  - Resistor.generateSVG(bands) - pass it ( or not ) stuff & it 'll generate a colored SVG
+  - ( .. )
+  -> R: write down here stuff from notes on paper
+*/
+
+//R: added directly to a resistor insance in the current Resistor implm
+var myResistor = Resistor('10k')
+myResistor.generateBands = function(bands){
+  // TODO: handle values above 1 only for the moment ( aka no m,µ,n by now)
+  if(this.value < 1){
+    console.log('m,µ,n not handled by now ! ')
+  } else {
+    console.log('res value is above 1 Ohm: ' + this.resValue)
+    // ====
+    var colorCodesArr = [];
+    
+    if(this.resValue < 10){ // if we only have one digit
+      // == 4 bands ==
+      if( bands === 4 ){
+        colorCodesArr.push ( this.resValue ); // value in 1st, to apply to convention
+        colorCodesArr.push ( 0 );             // added 0, same as above
+        colorCodesArr.push ( 0.1 );           // adjusted multiplier to comply with the above(s) - 4 band version
+      }
+      // == 5 bands ==
+      else {
+        colorCodesArr.push ( this.resValue ); // value in 1st, to apply to convention
+        colorCodesArr.push ( 0 );             // added 0, same as above
+        colorCodesArr.push ( 0 );             // added 0, same as above
+        colorCodesArr.push ( 0.01 );           // adjusted multiplier to comply with the above(s) - 5 band version
+      }  
+      
+    } else { // else, aka any number of digit
+      // == prepare further bands handling ==
+      var serValStr = this.resValue.toString();
+      colorCodesArr.push ( serValStr[0] ); // extract first digit
+      colorCodesArr.push ( serValStr[1] ); // extract second digit
+      // == 5 bands & adjust if additional digit precision is provided in original resistor value ==
+      if( bands === 5 && serValStr.length >= 3 ){ // if we have a third digit that won't be zero-ed on 5 band resistors
+        colorCodesArr.push ( serValStr[3] ); // extract third digit
+        var multiplier = resValStr.substr(3); // extract rest of number if any - that is, level to 0's & use in multiplier
+        if(multiplier !== ''){
+          // zero-out any lasting digit, be it a 10's or whatever
+          multiplier = Number( '1' + Array(multiplier.length+1).join('0') );
+          
+        }
+      }
+      // == 5 bands ==
+      // == 4 bands ==
+      else {
+        colorCodesArr.push ( 1 ); // multiplier - 4 band version
+      }
+      
+    }
+    
+    // ====
+  }
+}
