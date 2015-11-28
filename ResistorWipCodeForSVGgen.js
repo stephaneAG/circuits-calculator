@@ -660,3 +660,20 @@ hackyUpdate.toString = updateStack;
     // display with a custom separator & a custom style for it
     console.displayLog('\r\n       |\r\n', 'color: gray' )
 */
+
+// the following use a hacked version of the console (  assumed dirty trick ;p )
+function updateStack2(){
+  if(idx < cntr){
+    console.clear();
+    
+    myResistor.resValue = resistorsStack[idx].resValue; myResistor.resStr = resistorsStack[idx].resStr;
+    myResistor.logResistor()
+    console.displayLog() // R: using a 'hacked' console !!
+    ++idx;
+  } else {
+    _console.log('done !') // R: using original console !!
+  }
+}
+
+var hackyUpdate2 = function(){}
+hackyUpdate2.toString = updateStack2;
