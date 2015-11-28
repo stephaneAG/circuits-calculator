@@ -738,3 +738,37 @@ var hackyUpdate4 = function(sep, bef, aft){
 // also R: if using the below 'toString' hack, typing the name of the fcn & a dot ( . ) after it
 // 'll also call it, sign that it's used internally to further query some props ( .. )
 hackyUpdate4.toString = function(){ updateStack4( hackyUpdater.separator, hackyUpdater.before, hackyUpdater.after ); }
+
+
+/* same as some of the above for the ahcked consoel log without addition logs messages */
+ console.log = function(message){
+    var args = Array.prototype.slice.call(arguments, 1);
+    this.messages.push( message );
+    this.args = this.args.concat( args );// wtf not working ?
+    // debug
+    //_console.log( 'message: ' + message + '\r\nargs[]:', args)
+    //_console.log( 'console.messages[]: ' + '\r\n-> ' + this.messages.join('\r\n-> ') + '\r\nconsole.args[]:' + '\r\n-> ' + this.args.join('\r\n-> ') )
+  }
+  console.clearMessages = function(){
+    console.args = [];
+    console.messages = [];
+  }
+  console.displayLog = function(separator, separatorStyle){
+    var theSep = separator || '\r\n'
+    var theSeparatorStyle = separatorStyle || 'color: purple'
+    if(theSep === '\r\n') _console.log.apply( _console, Array(this.messages.join( theSep ) ).concat( this.args ) )
+    else {
+      var ruleIdx=0
+      for(var i=0; i < console.messages.length; i++){
+        var currRuleIdx = ruleIdx;
+        ruleIdx += console.messages[i].split('%c').length-1;
+        //_console.log('currRuleIdx: ' + currRuleIdx + ' ruleIdx: ' + ruleIdx)
+        if ( i < console.messages.length-1 ){
+          console.args.splice(ruleIdx, 0, theSeparatorStyle, 'color: black');
+          ruleIdx += 2;
+        }
+      }
+      _console.log.apply( _console, Array(this.messages.join( '%c'+theSep+'%c' ) ).concat( this.args ) )
+    }
+    this.clearMessages();
+  }
