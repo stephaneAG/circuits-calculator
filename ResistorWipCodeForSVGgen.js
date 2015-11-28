@@ -220,7 +220,7 @@ myResistor.generateBands2 = function(bands){
       if( bands === 4 ){
         //console.log('4bands - three digit')
         colorCodesArr.push ( Number( (''+this.resValue)[0] ) ); // 1st digit
-        colorCodesArr.push ( Number( (''+this.resValue)[0] ) ); // 2nd digit
+        colorCodesArr.push ( Number( (''+this.resValue)[1] ) ); // 2nd digit
         colorCodesArr.push ( 10 );                     // adjusted multiplier ( third digit is discarded ) - 4 band version
         colorCodesArr.push ( '±' );                   // dummy placeholder for tolerance
         return colorCodesArr;
@@ -527,6 +527,13 @@ Solution ?
     sleep 3;
   done;
 
+  ## quicker / final version of the above
+  extractFromChromeJsConsole(){
+    sleep 5; for i in {0..24}; do echo "${i}: calling js .."; xdotool type "hackyUpdate"; xdotool key Return; sleep 1; echo "${i} takin screenshot .."; import -window "0x4400168" -crop 510x254+13+115 -delay 200 "screenshot$i.png"; sleep 1; done;
+    sleep 3
+    montage ./*.png -tile x5 -geometry +70+70 ./montage.png
+  }
+
   Once this is done, we can gently make a mosaic of our fresh colored logs
   In bash:
   montage ./* -tile x5 -geometry +0+0 ./montage.png
@@ -536,6 +543,7 @@ Solution ?
   also R: the following could have been handy if the wheel scroll wasn't some lamely configurable .. :/
           - scrollwheel down, 7 times: sleep 3; xdotool click --repeat 7 5
           - scrollwheel up, 3 times: sleep 3; xdotool click --repeat 3 4
+          the following command was used to make a screencast: ffmpeg -video_size 1920x1080 -framerate 30 -f x11grab -i :0.0+0,0 output.mp4
 */
 /*
 resistorsStack.forEach(function(resistor){
@@ -565,3 +573,90 @@ function updateStack(){
 var hackyUpdate = function(){}
 hackyUpdate.toString = updateStack;
 // now, we can type 'hackyUpdate' & hit Enter/Return, & it'll run the function ;D
+
+
+/* 
+  Now everything seems +/- fine with the generative algorithm ( although it's still quite big & could be optimized, while still keeping its clarity ) ..
+
+  .. yet I wanna improve the output "montage" of resistor tiles while keeping my console.log fcns the same ..
+
+  .. without overriding the original console obj neither its log function ( from the following article, there still seems to be a bug in chrome with it ..) ..
+
+  .. enter my littl' "hacky clojure trick" ;p
+
+  var consoleLog = function(theMessage){
+    var console = {};
+    console.log = function(message){
+      window.console.log('message for enclosed console obj: ' + message); // HERE, the replacement for the 'console.log()' calls
+    }
+    console.log(theMessage);
+    // HERE, any function already written than uses 'console.log()'
+  };
+
+  .. and only 10 seconds after writing the above, it seems that 'var _console = console' indeed works to keep the original object available :/ !
+  .. I guess an update has been done / or the dudes used ( .. )
+
+  So!
+
+  var _console = console
+  var console = {}  
+  console.messages = []
+  console.args = []
+  console.log = function(message){
+    var args = Array.prototype.slice.call(arguments, 1);
+    this.messages.push( message );
+    this.args = this.args.concat( args );// wtf not working ?
+    // debug
+    _console.log( 'message: ' + message + '\r\nargs[]:', args)
+    _console.log( 'console.messages[]: ' + '\r\n-> ' + this.messages.join('\r\n-> ') + '\r\nconsole.args[]:' + '\r\n-> ' + this.args.join('\r\n-> ') )
+  }
+  console.clearMessages = function(){
+    console.args = [];
+    console.messages = [];
+  }
+  console.displayLog = function(separator, separatorStyle){
+    var theSep = separator || '\r\n'
+    var theSeparatorStyle = separatorStyle || 'color: purple'
+    if(theSep === '\r\n') _console.log.apply( _console, Array(this.messages.join( theSep ) ).concat( this.args ) )
+    else {
+      var ruleIdx=0
+      for(var i=0; i < console.messages.length; i++){
+        var currRuleIdx = ruleIdx;
+        ruleIdx += console.messages[i].split('%c').length-1;
+        _console.log('currRuleIdx: ' + currRuleIdx + ' ruleIdx: ' + ruleIdx)
+        if ( i < console.messages.length-1 ){
+          console.args.splice(ruleIdx, 0, theSeparatorStyle, 'color: black');
+          ruleIdx += 2;
+        }
+      }
+      _console.log.apply( _console, Array(this.messages.join( '%c'+theSep+'%c' ) ).concat( this.args ) )
+    }
+    this.clearMessages();
+  }
+
+  
+
+  Usage:
+    console.log('premier message')
+    console.log('%csecond %cmessage', 'color: red', 'color: blue')
+    console.log('%ctroisieme %cmessage', 'color: yellow', 'color: green')
+    console.log('quatrieme message')
+    console.log('%ccinquieme message', 'color: orange')
+
+    // display as the original console.log would have, but without any gray lines in between the lines logged
+    console.displayLog()
+    // or
+    console.displayLog('')
+
+    // display with a space in between instead of a new line
+    console.displayLog(' ')
+
+    // display with more new lines than the default ( a line per log )
+    console.displayLog('\r\n\r\n')
+
+    // display with a custom separator
+    console.displayLog(' ==> ')
+
+    // display with a custom separator & a custom style for it
+    console.displayLog('\r\n       |\r\n', 'color: gray' )
+*/
