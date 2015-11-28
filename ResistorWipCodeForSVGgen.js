@@ -664,7 +664,7 @@ hackyUpdate.toString = updateStack;
 // the following use a hacked version of the console (  assumed dirty trick ;p )
 function updateStack2(){
   if(idx < cntr){
-    console.clear();
+    _console.clear(); // R: using original console !!
     
     myResistor.resValue = resistorsStack[idx].resValue; myResistor.resStr = resistorsStack[idx].resStr;
     myResistor.logResistor()
@@ -677,3 +677,64 @@ function updateStack2(){
 
 var hackyUpdate2 = function(){}
 hackyUpdate2.toString = updateStack2;
+
+// hacky update to the above hack to have an even better output ;D
+function updateStack3(separator, before, after){
+  if(idx < cntr){
+    _console.clear(); // R: using original console !!
+    var theSep = separator || '';
+    var theBefore = before || '';
+    var theAfter = after || ''
+    myResistor.resValue = resistorsStack[idx].resValue; myResistor.resStr = resistorsStack[idx].resStr;
+    myResistor.logResistor()
+    
+    // log stuff with pseudo layout ;p
+    _console.log(theBefore); // R: using original console !!
+    console.displayLog(theSep) // R: using a 'hacked' console !!
+    _console.log(theAfter); // R: using original console !!
+    ++idx;
+  } else {
+    _console.log('done !') // R: using original console !!
+  }
+}
+
+var hackyUpdater = {}
+var hackyUpdate3 = function(sep, bef, aft){
+  hackyUpdater.separator = sep, hackyUpdater.before = bef, hackyUpdater.after = aft
+}
+// also R: if using the below 'toString' hack, typing the name of the fcn & a dot ( . ) after it
+// 'll also call it, sign that it's used internally to further query some props ( .. )
+hackyUpdate3.toString = function(){ updateStack3( hackyUpdater.separator, hackyUpdater.before, hackyUpdater.after ); }
+
+// Usage:
+// optional: set a separator, a before & an after
+hackyUpdate3('  ', '\r\n', '\r\n') // ex: display resitor inline
+// call the hackyUpdate that applies the stuff set above & doesn't need ending '()' to execute
+hackyUpdate3
+
+function updateStack4(separator, before, after){
+  if(idx < cntr){
+    _console.clear(); // R: using original console !!
+    var theSep = separator || '';
+    var theBefore = before || '';
+    var theAfter = after || ''
+    myResistor.resValue = resistorsStack[idx].resValue; myResistor.resStr = resistorsStack[idx].resStr;
+    myResistor.logResistor()
+    
+    // log stuff with pseudo layout ;p
+    console.log(theBefore); // R: using a 'hacked' console !! ------> only difference with 'updateStack4'
+    console.displayLog(theSep) // R: using a 'hacked' console !!
+    console.log(theAfter); // R: using original console !!    ------> only difference with 'updateStack4'
+    ++idx;
+  } else {
+    _console.log('done !') // R: using a 'hacked' console !!
+  }
+}
+
+var hackyUpdater = {}
+var hackyUpdate4 = function(sep, bef, aft){
+  hackyUpdater.separator = sep, hackyUpdater.before = bef, hackyUpdater.after = aft
+}
+// also R: if using the below 'toString' hack, typing the name of the fcn & a dot ( . ) after it
+// 'll also call it, sign that it's used internally to further query some props ( .. )
+hackyUpdate4.toString = function(){ updateStack4( hackyUpdater.separator, hackyUpdater.before, hackyUpdater.after ); }
