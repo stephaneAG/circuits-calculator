@@ -255,6 +255,19 @@ ResistorProto.prototype.generateBands2 = function(bands){
   }
 }
 
+// utility - display the array of bands as colored inline array whatever the number of items
+function logBands(bands){
+  var color_green = '\x1b[32m', color_yellow = '\x1b[33m', color_def = '\x1b[0m';
+  var logStr = '[ ';
+  for(var i=0; i < bands.length; i++){
+    !isNaN(bands[i]) ? logStr += color_yellow + bands[i] : logStr += color_green + "'" + bands[i] + "'";
+    logStr += color_def;
+    i < bands.length-1 ? logStr += ', ' : '';
+  }
+  logStr += ' ]'
+  console.log(logStr)
+}
+
 
 //  == Resistor class ( public ) ==
 //function Resistor(resVal, resStr){ return new ResistorProto(resVal, resStr) }
@@ -275,7 +288,6 @@ function Resistor(resistorValue){
   
   return new ResistorProto(this.resValue, this.resStr)
 }
-
 
 
 // == NodeJS module exports ==
