@@ -148,7 +148,7 @@ exps2.forEach(function(mapItem){
 })
 
 // generate the bands for a Resistor ( 4 bands & 5bands )
-ResistorProto.prototype.generateBands2 = function(bands){
+ResistorProto.prototype.generateBands = function(bands){
   // TODO: handle values above 1 only for the moment ( aka no m,µ,n by now)
   if(this.value < 1){
     console.log('m,µ,n not handled by now ! ')
@@ -256,13 +256,14 @@ ResistorProto.prototype.generateBands2 = function(bands){
 }
 
 // utility - display the array of bands as colored inline array whatever the number of items
-function logBands(bands){
+ResistorProto.prototype.logBands = function(bands){
+  var bandsArr = this.generateBands(bands);
   var color_green = '\x1b[32m', color_yellow = '\x1b[33m', color_def = '\x1b[0m';
   var logStr = '[ ';
-  for(var i=0; i < bands.length; i++){
-    !isNaN(bands[i]) ? logStr += color_yellow + bands[i] : logStr += color_green + "'" + bands[i] + "'";
+  for(var i=0; i < bandsArr.length; i++){
+    !isNaN(bandsArr[i]) ? logStr += color_yellow + bandsArr[i] : logStr += color_green + "'" + bandsArr[i] + "'";
     logStr += color_def;
-    i < bands.length-1 ? logStr += ', ' : '';
+    i < bandsArr.length-1 ? logStr += ', ' : '';
   }
   logStr += ' ]'
   console.log(logStr)
